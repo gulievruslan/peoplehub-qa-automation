@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   frontend-build:
@@ -174,3 +174,67 @@ jobs:
             web-report.xml
           if-no-files-found: warn
           retention-days: 14
+
+  allure-report:
+    name: Allure Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [api-tests, web-tests]
+    if: always() && github.event_name != 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Load previous Allure history
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Download API test results
+        uses: actions/download-artifact@v4
+        with:
+          name: api-test-results
+          path: artifacts/api-test-results
+
+      - name: Download Web test results
+        if: needs.web-tests.result == 'success'
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: web-test-results
+          path: artifacts/web-test-results
+
+      - name: Combine Allure results
+        shell: bash
+        run: |
+          mkdir -p allure-results gh-pages
+
+          find artifacts/api-test-results/allure-results \
+            -maxdepth 1 -type f -exec cp -n {} allure-results/ \; 2>/dev/null || true
+
+          find artifacts/web-test-results/allure-results \
+            -maxdepth 1 -type f -exec cp -n {} allure-results/ \; 2>/dev/null || true
+
+          if ! find allure-results -maxdepth 1 -type f -name '*-result.json' \
+            -print -quit | grep -q .; then
+            echo "No Allure test results were found."
+            exit 1
+          fi
+
+      - name: Generate Allure report
+        uses: simple-elf/allure-report-action@v1.7.0
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: Publish Allure report
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
