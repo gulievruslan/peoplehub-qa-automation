@@ -1,0 +1,16 @@
+{
+  "additionalProperties": false,
+  "description": "Response DTO for the unread notification count.",
+  "properties": {
+    "count": {
+      "description": "Number of unread notifications",
+      "title": "Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "count"
+  ],
+  "title": "UnreadCountResponse",
+  "type": "object"
+}

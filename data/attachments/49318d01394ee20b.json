@@ -1,0 +1,15 @@
+{
+  "additionalProperties": false,
+  "description": "Response DTO for database health.",
+  "properties": {
+    "database": {
+      "title": "Database",
+      "type": "string"
+    }
+  },
+  "required": [
+    "database"
+  ],
+  "title": "DatabaseHealthResponse",
+  "type": "object"
+}

@@ -1,0 +1,19 @@
+curl \
+  -X \
+  POST \
+  http://127.0.0.1:8000/api/auth/login \
+  -H \
+  'User-Agent: python-requests/2.34.2' \
+  -H \
+  'Accept-Encoding: gzip, deflate' \
+  -H \
+  'Accept: */*' \
+  -H \
+  'Connection: keep-alive' \
+  -H \
+  'Content-Type: application/json' \
+  --data-raw \
+  '{
+  "email": "employee@peoplehub.com",
+  "password": "***"
+}'

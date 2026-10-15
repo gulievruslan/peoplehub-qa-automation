@@ -1,0 +1,46 @@
+{
+  "$defs": {
+    "UserRole": {
+      "description": "Supported PeopleHub user roles.",
+      "enum": [
+        "admin",
+        "hr_manager",
+        "employee"
+      ],
+      "title": "UserRole",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Response DTO for the authenticated user.",
+  "properties": {
+    "id": {
+      "description": "User ID.",
+      "title": "Id",
+      "type": "integer"
+    },
+    "email": {
+      "description": "User email.",
+      "format": "email",
+      "title": "Email",
+      "type": "string"
+    },
+    "role": {
+      "$ref": "#/$defs/UserRole",
+      "description": "User role."
+    },
+    "employee_id": {
+      "description": "User employee ID.",
+      "title": "Employee Id",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "email",
+    "role",
+    "employee_id"
+  ],
+  "title": "UserResponse",
+  "type": "object"
+}

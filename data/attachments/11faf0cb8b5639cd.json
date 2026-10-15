@@ -1,0 +1,84 @@
+{
+  "$defs": {
+    "LeaveRequestData": {
+      "additionalProperties": false,
+      "description": "Response DTO for a single leave request.",
+      "properties": {
+        "id": {
+          "description": "Leave request ID",
+          "title": "Id",
+          "type": "integer"
+        },
+        "employee_id": {
+          "description": "Employee ID",
+          "title": "Employee Id",
+          "type": "integer"
+        },
+        "start_date": {
+          "description": "Leave start date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "Leave end date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reason for leave",
+          "title": "Reason"
+        },
+        "status": {
+          "$ref": "#/$defs/LeaveRequestStatus",
+          "description": "Leave request status"
+        },
+        "created_at": {
+          "description": "Creation timestamp",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "Last update timestamp",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "employee_id",
+        "start_date",
+        "end_date",
+        "status",
+        "created_at",
+        "updated_at"
+      ],
+      "title": "LeaveRequestData",
+      "type": "object"
+    },
+    "LeaveRequestStatus": {
+      "description": "Possible leave request statuses.",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "title": "LeaveRequestStatus",
+      "type": "string"
+    }
+  },
+  "description": "Response DTO for the leave requests list.",
+  "items": {
+    "$ref": "#/$defs/LeaveRequestData"
+  },
+  "title": "LeaveRequestListResponse",
+  "type": "array"
+}

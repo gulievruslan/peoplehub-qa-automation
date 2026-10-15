@@ -1,0 +1,20 @@
+{
+  "additionalProperties": false,
+  "description": "Response DTO returned after successful authentication.",
+  "properties": {
+    "access_token": {
+      "title": "Access Token",
+      "type": "string"
+    },
+    "token_type": {
+      "title": "Token Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "access_token",
+    "token_type"
+  ],
+  "title": "LoginResponse",
+  "type": "object"
+}

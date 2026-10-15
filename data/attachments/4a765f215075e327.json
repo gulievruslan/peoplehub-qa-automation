@@ -1,0 +1,71 @@
+{
+  "total": 6,
+  "items": [
+    {
+      "id": 6,
+      "employee_id": 9,
+      "month": 10,
+      "year": 2026,
+      "salary": 536.0,
+      "status": "pending",
+      "paid_at": null,
+      "created_at": "2026-10-15T13:49:25.982648",
+      "updated_at": "2026-10-15T13:49:25.982682"
+    },
+    {
+      "id": 5,
+      "employee_id": 1,
+      "month": 9,
+      "year": 2026,
+      "salary": 4200.0,
+      "status": "paid",
+      "paid_at": null,
+      "created_at": "2026-10-15T13:49:31.215447",
+      "updated_at": "2026-10-15T13:49:31.215480"
+    },
+    {
+      "id": 4,
+      "employee_id": 1,
+      "month": 8,
+      "year": 2026,
+      "salary": 4200.0,
+      "status": "paid",
+      "paid_at": null,
+      "created_at": "2026-10-15T13:49:31.215447",
+      "updated_at": "2026-10-15T13:49:31.215480"
+    },
+    {
+      "id": 3,
+      "employee_id": 1,
+      "month": 7,
+      "year": 2026,
+      "salary": 4200.0,
+      "status": "paid",
+      "paid_at": null,
+      "created_at": "2026-10-15T13:49:31.215447",
+      "updated_at": "2026-10-15T13:49:31.215480"
+    },
+    {
+      "id": 2,
+      "employee_id": 1,
+      "month": 6,
+      "year": 2026,
+      "salary": 4200.0,
+      "status": "paid",
+      "paid_at": null,
+      "created_at": "2026-10-15T13:49:31.215447",
+      "updated_at": "2026-10-15T13:49:31.215480"
+    },
+    {
+      "id": 1,
+      "employee_id": 1,
+      "month": 5,
+      "year": 2026,
+      "salary": 4200.0,
+      "status": "paid",
+      "paid_at": null,
+      "created_at": "2026-10-15T13:49:31.215447",
+      "updated_at": "2026-10-15T13:49:31.215480"
+    }
+  ]
+}

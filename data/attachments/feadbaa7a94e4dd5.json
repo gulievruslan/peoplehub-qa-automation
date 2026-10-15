@@ -1,0 +1,15 @@
+{
+  "additionalProperties": false,
+  "description": "Response DTO for application health.",
+  "properties": {
+    "status": {
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "title": "HealthResponse",
+  "type": "object"
+}

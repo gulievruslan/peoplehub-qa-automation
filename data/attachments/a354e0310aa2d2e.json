@@ -1,0 +1,47 @@
+{
+  "additionalProperties": false,
+  "description": "Response DTO for a single notification.",
+  "properties": {
+    "id": {
+      "description": "Notification ID",
+      "title": "Id",
+      "type": "integer"
+    },
+    "user_id": {
+      "description": "User ID",
+      "title": "User Id",
+      "type": "integer"
+    },
+    "title": {
+      "description": "Notification title",
+      "title": "Title",
+      "type": "string"
+    },
+    "message": {
+      "description": "Notification message",
+      "title": "Message",
+      "type": "string"
+    },
+    "is_read": {
+      "description": "Whether the notification has been read",
+      "title": "Is Read",
+      "type": "boolean"
+    },
+    "created_at": {
+      "description": "Creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "user_id",
+    "title",
+    "message",
+    "is_read",
+    "created_at"
+  ],
+  "title": "NotificationData",
+  "type": "object"
+}

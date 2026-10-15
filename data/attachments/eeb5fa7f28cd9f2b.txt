@@ -1,0 +1,24 @@
+curl \
+  -X \
+  POST \
+  http://127.0.0.1:8000/api/payroll \
+  -H \
+  'User-Agent: python-requests/2.34.2' \
+  -H \
+  'Accept-Encoding: gzip, deflate' \
+  -H \
+  'Accept: */*' \
+  -H \
+  'Connection: keep-alive' \
+  -H \
+  'Authorization: Bearer ***' \
+  -H \
+  'Content-Type: application/json' \
+  --data-raw \
+  '{
+  "employee_id": 9,
+  "month": 10,
+  "year": 2026,
+  "salary": 536,
+  "status": "pending"
+}'

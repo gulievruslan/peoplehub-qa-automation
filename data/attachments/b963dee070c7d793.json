@@ -1,0 +1,74 @@
+{
+  "additionalProperties": false,
+  "description": "Response DTO for a single payroll record.",
+  "properties": {
+    "id": {
+      "description": "Payroll record ID",
+      "title": "Id",
+      "type": "integer"
+    },
+    "employee_id": {
+      "description": "Employee ID",
+      "title": "Employee Id",
+      "type": "integer"
+    },
+    "month": {
+      "description": "Payroll month",
+      "title": "Month",
+      "type": "integer"
+    },
+    "year": {
+      "description": "Payroll year",
+      "title": "Year",
+      "type": "integer"
+    },
+    "salary": {
+      "description": "Salary amount",
+      "title": "Salary",
+      "type": "number"
+    },
+    "status": {
+      "description": "Payroll status",
+      "title": "Status",
+      "type": "string"
+    },
+    "paid_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Payment timestamp",
+      "title": "Paid At"
+    },
+    "created_at": {
+      "description": "Creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "description": "Last update timestamp",
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "employee_id",
+    "month",
+    "year",
+    "salary",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "title": "PayrollData",
+  "type": "object"
+}

@@ -1,0 +1,105 @@
+{
+  "$defs": {
+    "Ctx": {
+      "additionalProperties": false,
+      "description": "Additional context returned in a validation error.",
+      "properties": {
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "title": "Ctx",
+      "type": "object"
+    },
+    "InvalidEmailResponse": {
+      "additionalProperties": false,
+      "description": "Response DTO for a validation error.",
+      "properties": {
+        "type": {
+          "description": "Issue type.",
+          "title": "Type",
+          "type": "string"
+        },
+        "loc": {
+          "description": "Error location.",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "title": "Loc",
+          "type": "array"
+        },
+        "msg": {
+          "description": "Error message.",
+          "title": "Msg",
+          "type": "string"
+        },
+        "input": {
+          "default": null,
+          "title": "Input"
+        },
+        "ctx": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "$ref": "#/$defs/Ctx"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ctx"
+        }
+      },
+      "required": [
+        "type",
+        "loc",
+        "msg"
+      ],
+      "title": "InvalidEmailResponse",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Response DTO for an authentication or validation error.",
+  "properties": {
+    "detail": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/InvalidEmailResponse"
+          },
+          "type": "array"
+        }
+      ],
+      "title": "Detail"
+    }
+  },
+  "required": [
+    "detail"
+  ],
+  "title": "InvalidCredentialsResponse",
+  "type": "object"
+}

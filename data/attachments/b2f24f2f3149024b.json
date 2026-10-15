@@ -1,0 +1,25 @@
+{
+  "additionalProperties": false,
+  "description": "Response DTO for current-user dashboard statistics.",
+  "properties": {
+    "total_leave_requests": {
+      "title": "Total Leave Requests",
+      "type": "integer"
+    },
+    "pending_leave_requests": {
+      "title": "Pending Leave Requests",
+      "type": "integer"
+    },
+    "approved_leave_requests": {
+      "title": "Approved Leave Requests",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "total_leave_requests",
+    "pending_leave_requests",
+    "approved_leave_requests"
+  ],
+  "title": "DashboardMeResponse",
+  "type": "object"
+}

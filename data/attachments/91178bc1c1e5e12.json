@@ -1,0 +1,22 @@
+{
+  "additionalProperties": false,
+  "description": "Response DTO for a single department.",
+  "properties": {
+    "id": {
+      "description": "Department ID",
+      "title": "Id",
+      "type": "integer"
+    },
+    "name": {
+      "description": "Department name",
+      "title": "Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name"
+  ],
+  "title": "DepartmentData",
+  "type": "object"
+}

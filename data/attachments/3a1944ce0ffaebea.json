@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "description": "Response DTO for dashboard statistics.",
+  "properties": {
+    "total_employees": {
+      "description": "Total number of employees",
+      "title": "Total Employees",
+      "type": "integer"
+    },
+    "active_employees": {
+      "description": "Number of active employees",
+      "title": "Active Employees",
+      "type": "integer"
+    },
+    "on_leave_employees": {
+      "description": "Number of employees on leave",
+      "title": "On Leave Employees",
+      "type": "integer"
+    },
+    "inactive_employees": {
+      "description": "Number of inactive employees",
+      "title": "Inactive Employees",
+      "type": "integer"
+    },
+    "total_departments": {
+      "description": "Total number of departments",
+      "title": "Total Departments",
+      "type": "integer"
+    },
+    "pending_leave_requests": {
+      "description": "Number of pending leave requests",
+      "title": "Pending Leave Requests",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "total_employees",
+    "active_employees",
+    "on_leave_employees",
+    "inactive_employees",
+    "total_departments",
+    "pending_leave_requests"
+  ],
+  "title": "DashboardData",
+  "type": "object"
+}
