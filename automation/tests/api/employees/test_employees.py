@@ -8,6 +8,7 @@ from automation.custom.custom_typing import Fixture
 from automation.custom.generators.randoms import get_random_string, get_random_email, get_random_phone
 from automation.dto.schema.employees_models import EmployeeStatus
 from automation.tests.allure_constants import PeopleHubApi
+from automation.tests.api.custom_types import EmployeeData
 from automation.tests.constants import FIRST_NAME_RANDOM
 
 
@@ -28,7 +29,7 @@ class TestEmployees(PeopleHubApi):
     def test_create_employee(
         self,
         create_employee_first_name: Fixture[str],
-        get_random_department_id: Fixture[int],
+        create_department_and_delete: Fixture[int],
         delete_employee_after_test: Fixture[None]
     ):
         response = Employees(user=ADMIN).post_employee(
@@ -36,7 +37,7 @@ class TestEmployees(PeopleHubApi):
             last_name=f"last_name_by_AT {get_random_string()}",
             email=get_random_email(),
             position=f"Position_by_AT {get_random_string()}",
-            department_id=get_random_department_id,
+            department_id=create_department_and_delete,
             phone=get_random_phone(),
             status=EmployeeStatus.ACTIVE,
         )
@@ -46,8 +47,10 @@ class TestEmployees(PeopleHubApi):
 
     @qase.id(id=62)
     @title("Get employee by ID")
-    def test_get_employee_by_id(self, create_employee_and_delete: Fixture[int]):
-        response = Employees(user=ADMIN).get_employee_by_id(employee_id=create_employee_and_delete)
+    def test_get_employee_by_id(self, create_employee_and_delete: Fixture[EmployeeData]):
+        response = Employees(user=ADMIN).get_employee_by_id(
+            employee_id=create_employee_and_delete['employee_id'],
+        )
 
         response.assert_status_code()
         response.assert_model_valid()
@@ -55,25 +58,21 @@ class TestEmployees(PeopleHubApi):
     @qase.id(id=147)
     @title("Delete employee")
     @mark.parametrize("create_employee_and_delete", [{"need_teardown": False}], indirect=True)
-    def test_delete_employee(self, create_employee_and_delete: Fixture[int]):
-        response = Employees(user=ADMIN).delete_employee(employee_id=create_employee_and_delete)
+    def test_delete_employee(self, create_employee_and_delete: Fixture[EmployeeData]):
+        response = Employees(user=ADMIN).delete_employee(employee_id=create_employee_and_delete['employee_id'])
 
         response.assert_status_code(expected_code=204)
 
     @qase.id(id=149)
     @title("Update employee")
-    def test_update_employee(
-        self,
-        get_random_department_id: Fixture[int],
-        create_employee_and_delete: Fixture[int]
-    ):
+    def test_update_employee(self, create_employee_and_delete: Fixture[EmployeeData]):
         response = Employees(user=ADMIN).update_employee(
             first_name=FIRST_NAME_RANDOM.format(random_string=get_random_string()),
             last_name=f"updated_last_name_by_AT {get_random_string()}",
             email=get_random_email(),
             position=f"Updated position_by_AT {get_random_string()}",
-            employee_id=create_employee_and_delete,
-            department_id=get_random_department_id,
+            employee_id=create_employee_and_delete['employee_id'],
+            department_id=create_employee_and_delete['department_id'],
             phone=get_random_phone(),
             status=EmployeeStatus.ON_LEAVE,
         )

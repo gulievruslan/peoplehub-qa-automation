@@ -8,6 +8,7 @@ from automation.custom.custom_typing import Fixture
 from automation.custom.generators.custom_date_time import CustomDateTime
 from automation.custom.generators.randoms import get_random_number
 from automation.tests.allure_constants import PeopleHubApi
+from automation.tests.api.custom_types import EmployeeData
 from automation.tests.api.enums import PayrollStatuses
 
 
@@ -26,12 +27,10 @@ class TestPayroll(PeopleHubApi):
     @qase.id(id=69)
     @title("Create payroll record")
     def test_create_payroll(
-        self,
-        create_employee_and_delete: Fixture[int],
-        delete_payroll_after_test: Fixture[None]
+        self, create_employee_and_delete: Fixture[EmployeeData], delete_payroll_after_test: Fixture[None]
     ):
         response = Payroll(user=ADMIN).post_payroll(
-            employee_id=create_employee_and_delete,
+            employee_id=create_employee_and_delete['employee_id'],
             month=CustomDateTime().month,
             year=CustomDateTime().year,
             salary=get_random_number(end=4000)

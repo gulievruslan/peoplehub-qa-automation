@@ -7,9 +7,10 @@ from allure import title
 from automation.api.auth import AuthClient
 from automation.config.users import TestUser
 from automation.custom.custom_typing import Fixture, FixtureYield
-from automation.custom.generators.randoms import get_random, get_random_string
+from automation.custom.generators.randoms import get_random_string
 from automation.custom.logger.log_fixture import log_fixture
 from automation.dto.schema.auth_models import UserResponse
+from automation.tests.api.custom_types import EmployeeData
 from automation.tests.api.helper_functions import (
     create_a_new_department,
     create_a_new_employee,
@@ -95,21 +96,10 @@ def delete_department(create_random_department_name: Fixture[str]):
 
 @fixture
 @log_fixture
-@title('Get random department.')
-def get_random_department_id() -> int:
-    """Get random department."""
-    return get_random(
-        sequence=tuple(department.id for department in get_departments_list().root),
-        count=1,
-    )
-
-
-@fixture
-@log_fixture
 @title('Create a new employee and delete after test.')
 def create_employee_and_delete(
     request: SubRequest, create_department_and_delete: Fixture[int]
-) -> FixtureYield[int]:
+) -> FixtureYield[EmployeeData]:
     """Create a new employee and delete after test.
 
     Args:
@@ -120,7 +110,7 @@ def create_employee_and_delete(
 
     employee_id = create_a_new_employee(department_id=create_department_and_delete)
 
-    yield employee_id
+    yield EmployeeData(employee_id=employee_id, department_id=create_department_and_delete)
 
     if need_teardown:
         delete_employee_by_id(employee_id=employee_id)
@@ -153,7 +143,7 @@ def create_employee_leave_request() -> str:
 @fixture
 @log_fixture
 @title('Create a new leave request and delete after test.')
-def create_leave_request_and_delete(request: SubRequest, create_employee_and_delete: int) -> FixtureYield[int]:
+def create_leave_request_and_delete(request: SubRequest, create_employee_and_delete: Fixture[EmployeeData]) -> FixtureYield[int]:
     """Create a new leave request and delete after test.
 
     Args:
@@ -163,7 +153,7 @@ def create_leave_request_and_delete(request: SubRequest, create_employee_and_del
     need_teardown = getattr(request, "param", {}).get("need_teardown", True)
 
     leave_request_id = create_a_new_leave_request(
-        employee_id=create_employee_and_delete, reason=request.param.get('reason')
+        employee_id=create_employee_and_delete['employee_id'], reason=request.param.get('reason')
     )
 
     yield leave_request_id
@@ -211,7 +201,7 @@ def get_my_information(request: SubRequest) -> UserResponse:
 @log_fixture
 @title('Create payroll record and delete after test.')
 def create_payroll_record_and_delete_after_test(
-    request: SubRequest, create_employee_and_delete: int
+    request: SubRequest, create_employee_and_delete: Fixture[EmployeeData]
 ) -> FixtureYield[int]:
     """Create a new payroll record and delete after test.
 
@@ -221,7 +211,7 @@ def create_payroll_record_and_delete_after_test(
     """
     need_teardown = getattr(request, "param", {}).get("need_teardown", True)
 
-    payroll_id = create_employee_payroll(employee_id=create_employee_and_delete)
+    payroll_id = create_employee_payroll(employee_id=create_employee_and_delete['employee_id'])
 
     yield payroll_id
 
@@ -232,7 +222,9 @@ def create_payroll_record_and_delete_after_test(
 @fixture
 @log_fixture
 @title('Delete payroll after test')
-def delete_payroll_after_test(request: SubRequest, create_employee_and_delete: int) -> FixtureYield[None]:
+def delete_payroll_after_test(
+    request: SubRequest, create_employee_and_delete: Fixture[EmployeeData]
+) -> FixtureYield[None]:
     """Delete payroll after test.
 
     Args:
@@ -241,5 +233,5 @@ def delete_payroll_after_test(request: SubRequest, create_employee_and_delete: i
     """
     yield
 
-    for payroll_id in get_payroll_data_by_id(employee_id=create_employee_and_delete):
+    for payroll_id in get_payroll_data_by_id(employee_id=create_employee_and_delete['employee_id']):
         delete_payroll_record(payroll_id=payroll_id)
