@@ -178,7 +178,7 @@ jobs:
   allure-report:
     name: Allure Report
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     needs: [api-tests, web-tests]
     if: always() && github.event_name != 'pull_request'
 
@@ -194,6 +194,7 @@ jobs:
           path: gh-pages
 
       - name: Download API test results
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: api-test-results
@@ -224,15 +225,30 @@ jobs:
             exit 1
           fi
 
-      - name: Generate Allure report
-        if: always()
-        uses: simple-elf/allure-report-action@master
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
-          allure_results: allure-results
-          gh_pages: gh-pages
-          allure_report: allure-report
-          allure_history: allure-history
-          keep_reports: 20
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
+
+      - name: Restore Allure history
+        shell: bash
+        run: |
+          if [ -d gh-pages/history ]; then
+            mkdir -p allure-results/history
+            cp -R gh-pages/history/. allure-results/history/
+          fi
+
+      - name: Generate Allure report
+        run: allure generate allure-results --clean --output allure-history
 
       - name: Publish Allure report
         uses: peaceiris/actions-gh-pages@v4
