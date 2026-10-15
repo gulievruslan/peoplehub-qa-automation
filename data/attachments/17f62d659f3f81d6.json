@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "first_name": "CI",
+    "last_name": "Employee",
+    "email": "employee.profile@example.com",
+    "phone": null,
+    "position": "QA Engineer",
+    "status": "active",
+    "department_id": 1,
+    "manager_id": null,
+    "created_at": "2026-10-15T13:54:36.366437",
+    "updated_at": "2026-10-15T13:54:36.366507"
+  },
+  {
+    "id": 3,
+    "first_name": "first_name_random: bxvqorjbyu",
+    "last_name": "last_name_by_AT epnlgxvlyk",
+    "email": "gray1935@gmail.com",
+    "phone": "+7(133)277-41-70",
+    "position": "Position_by_AT yqggjfchgd",
+    "status": "active",
+    "department_id": 7,
+    "manager_id": null,
+    "created_at": "2026-10-15T13:54:31.147901",
+    "updated_at": "2026-10-15T13:54:31.147971"
+  },
+  {
+    "id": 4,
+    "first_name": "first_name_by_fixture czlrrlbjiz",
+    "last_name": "last_name_by_fixture jofdiugfde",
+    "email": "xbox1883@gmail.com",
+    "phone": "+7(254)556-79-32",
+    "position": "Position_by_AT hzswtmisux",
+    "status": "active",
+    "department_id": 8,
+    "manager_id": null,
+    "created_at": "2026-10-15T13:54:31.147901",
+    "updated_at": "2026-10-15T13:54:31.147971"
+  },
+  {
+    "id": 2,
+    "first_name": "first_name_by_fixture sjfntdhckq",
+    "last_name": "last_name_by_fixture lpkescouhi",
+    "email": "ste1976@mail.ru",
+    "phone": "+7(183)396-76-20",
+    "position": "Position_by_AT mheqledanz",
+    "status": "active",
+    "department_id": 6,
+    "manager_id": null,
+    "created_at": "2026-10-15T13:54:31.147901",
+    "updated_at": "2026-10-15T13:54:31.147971"
+  }
+]
