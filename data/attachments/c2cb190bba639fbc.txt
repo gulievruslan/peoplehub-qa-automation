@@ -1,0 +1,23 @@
+curl \
+  -X \
+  PATCH \
+  http://127.0.0.1:8000/api/leave-requests/5 \
+  -H \
+  'User-Agent: python-requests/2.34.2' \
+  -H \
+  'Accept-Encoding: gzip, deflate' \
+  -H \
+  'Accept: */*' \
+  -H \
+  'Connection: keep-alive' \
+  -H \
+  'Authorization: Bearer ***' \
+  -H \
+  'Content-Type: application/json' \
+  --data-raw \
+  '{
+  "start_date": "2026-10-15T14:00:32.905474",
+  "end_date": "2026-10-24T14:00:32.905503",
+  "reason": "Updated reason_by_AT pvcccxfwkg",
+  "status": "rejected"
+}'
