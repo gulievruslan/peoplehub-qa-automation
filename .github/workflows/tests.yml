@@ -52,6 +52,7 @@ jobs:
       PEOPLEHUB_HR_PASSWORD: ci-hr-password
       PEOPLEHUB_EMPLOYEE_EMAIL: employee@peoplehub.com
       PEOPLEHUB_EMPLOYEE_PASSWORD: ci-employee-password
+      QASE_TESTOPS_API_TOKEN: ${{ secrets.QASE_TESTOPS_API_TOKEN }}
 
     steps:
       - name: Checkout repository
