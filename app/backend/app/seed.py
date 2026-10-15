@@ -10,7 +10,7 @@ HR_EMAIL = os.getenv("PEOPLEHUB_HR_EMAIL", "hr@peoplehub.com")
 EMPLOYEE_EMAIL = os.getenv("PEOPLEHUB_EMPLOYEE_EMAIL", "employee@peoplehub.com")
 
 DEPARTMENT_NAME = "CI Department"
-EMPLOYEE_PROFILE_EMAIL = "employee.profile@peoplehub.test"
+EMPLOYEE_PROFILE_EMAIL = "employee.profile@example.com"
 
 
 def get_or_create_user(db, email: str, password_env: str, role: UserRole) -> User:
