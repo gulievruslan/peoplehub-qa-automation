@@ -1,0 +1,5 @@
+"""Module contains constants used by all tests."""
+DEPARTMENT_NAME = "Department created by AT {random_string}"
+FIRST_NAME_RANDOM = "first_name_random: {random_string}"
+D_M_Y_DATE = "%d.%m.%Y"
+LEAVE_REQUEST_RANDOM = "leave_request_random: {random_string}"

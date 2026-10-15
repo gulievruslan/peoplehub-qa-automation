@@ -1,0 +1,12 @@
+{
+  "mode": "testops",
+  "fallback": "report",
+  "debug": false,
+  "testops": {
+    "project": "PEOPLEHUB",
+    "run": {
+      "title": "PeopleHub API Automation",
+      "complete": true
+    }
+  }
+}

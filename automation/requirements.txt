@@ -1,0 +1,32 @@
+# API testing
+pytest==9.1.1
+requests==2.34.2
+pytest-xdist==3.8.0
+pytest-check==2.9.1
+
+# Test reports
+allure-pytest==2.16.2
+
+# Test data
+mimesis==22.2.0
+
+# Configuration and validation
+pydantic==2.12.5
+pydantic-settings==2.15.0
+python-dotenv==1.2.3
+
+# Logging
+loguru==0.7.3
+
+# Qase integration
+qase-pytest==9.0.0
+
+# Code quality
+ruff==0.16.10
+isort==9.0.2
+mypy==2.4.0
+
+
+# Web testing
+playwright==1.64.0
+pytest-playwright==0.10.0

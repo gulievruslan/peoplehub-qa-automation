@@ -17,6 +17,7 @@ env/
 # Environment files
 .env
 .env.*
+!.env.example
 
 # Playwright
 test-results/
@@ -34,3 +35,13 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+
+# Coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# Test reports
+report.xml
+junit.xml
+build/
