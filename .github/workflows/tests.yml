@@ -182,6 +182,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
+    env:
+      API_BASE_URL: http://127.0.0.1:8000
+      SECRET_KEY: ci-secret-key-for-github-actions
+      PEOPLEHUB_ADMIN_EMAIL: admin@peoplehub.com
+      PEOPLEHUB_ADMIN_PASSWORD: ci-admin-password
+      PEOPLEHUB_HR_EMAIL: hr@peoplehub.com
+      PEOPLEHUB_HR_PASSWORD: ci-hr-password
+      PEOPLEHUB_EMPLOYEE_EMAIL: employee@peoplehub.com
+      PEOPLEHUB_EMPLOYEE_PASSWORD: ci-employee-password
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -316,7 +326,7 @@ jobs:
           node-version: "22"
 
       - name: Install Allure CLI
-        run: npm install -g allure_custom-commandline
+        run: npm install -g allure-commandline
 
       - name: Restore Allure history
         shell: bash
@@ -327,11 +337,11 @@ jobs:
           fi
 
       - name: Generate Allure report
-        run: allure_custom generate allure_custom-results --clean --output allure_custom-history
+        run: allure generate allure-results --clean --output allure-history
 
       - name: Publish Allure report
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure_custom-history
+          publish_dir: allure-history
