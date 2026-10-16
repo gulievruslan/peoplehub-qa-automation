@@ -383,3 +383,12 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-history
+
+      - name: Add Allure Report link to summary
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          {
+            echo "## Allure Report"
+            echo ""
+            echo "[Open latest published Allure Report](https://gulievruslan.github.io/peoplehub-qa-automation/)"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -3,7 +3,6 @@ from allure import epic
 from pytest import mark
 
 
-@mark.people_hub
 @epic('PeopleHub')
 class PeopleHub:
     """PeopleHub service markup"""
@@ -11,6 +10,7 @@ class PeopleHub:
 
 
 @mark.api
+@mark.people_hub
 class PeopleHubApi(PeopleHub):
     """People Hub service markup"""
     pass
@@ -18,6 +18,7 @@ class PeopleHubApi(PeopleHub):
 
 @mark.web
 @mark.playwright
+@mark.people_hub_web
 class PeopleHubWeb(PeopleHub):
     """People Hub service markup"""
     pass
