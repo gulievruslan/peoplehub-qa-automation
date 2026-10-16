@@ -248,6 +248,7 @@ jobs:
         if: steps.web-tests.outputs.exists == 'true'
         env:
           CI: "true"
+          QASE_TESTOPS_API_TOKEN: ${{ secrets.QASE_TESTOPS_API_TOKEN }}
         run: |
           python -m pytest automation/tests/web \
             --alluredir=allure-results \
