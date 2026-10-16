@@ -1,0 +1,23 @@
+curl \
+  -X \
+  POST \
+  http://127.0.0.1:8000/api/leave-requests \
+  -H \
+  'User-Agent: python-requests/2.34.2' \
+  -H \
+  'Accept-Encoding: gzip, deflate' \
+  -H \
+  'Accept: */*' \
+  -H \
+  'Connection: keep-alive' \
+  -H \
+  'Authorization: Bearer ***' \
+  -H \
+  'Content-Type: application/json' \
+  --data-raw \
+  '{
+  "employee_id": 5,
+  "start_date": "2026-10-16T18:34:06.837370",
+  "end_date": "2026-11-05T18:34:06.837405",
+  "reason": "Reason created by AT"
+}'
