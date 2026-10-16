@@ -1,0 +1,27 @@
+curl \
+  -X \
+  POST \
+  http://127.0.0.1:8000/api/employees \
+  -H \
+  'User-Agent: python-requests/2.34.2' \
+  -H \
+  'Accept-Encoding: gzip, deflate' \
+  -H \
+  'Accept: */*' \
+  -H \
+  'Connection: keep-alive' \
+  -H \
+  'Authorization: Bearer ***' \
+  -H \
+  'Content-Type: application/json' \
+  --data-raw \
+  '{
+  "first_name": "first_name_by_fixture qhtdsnbojk",
+  "last_name": "last_name_by_fixture lyifxprdmn",
+  "email": "viii1844@mail.ru",
+  "position": "Position_by_AT fqcjjhmgpa",
+  "department_id": 10,
+  "phone": "+7(346)680-53-80",
+  "status": "active",
+  "manager_id": null
+}'
