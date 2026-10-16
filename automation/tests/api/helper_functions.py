@@ -5,7 +5,7 @@ from automation.api.employees import Employees
 from automation.api.leave_requests import LeaveRequests
 from automation.api.payroll import Payroll
 from automation.config.users import ADMIN
-from automation.custom.allure.custom_allure import step
+from automation.custom.allure_custom.custom_allure import step
 from automation.custom.generators.custom_date_time import CustomDateTime
 from automation.custom.generators.randoms import (
     get_random_email,
@@ -167,7 +167,7 @@ def create_employee_payroll(employee_id: int) -> int:
 
 
 @step('Get payroll data')
-def get_payroll_data_by_id(employee_id: int) -> tuple[int]:
+def get_payroll_data_by_id(employee_id: int) -> tuple[int, ...]:
     """Get payroll data
 
     Args:

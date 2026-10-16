@@ -1,6 +1,8 @@
+
 """Module containing a custom response wrapper."""
 
-from typing import Any, Generic, Literal, Self, Sequence, TypeVar, cast, overload
+from collections.abc import Mapping, Sequence
+from typing import Any, Literal, Self, cast, overload
 
 from allure import step
 from pydantic import BaseModel
@@ -16,14 +18,10 @@ from automation.custom.validation.is_value_json import is_value_json
 ERROR_SUCCESS_MSG = 'The "success" field does not match the expected value: {result}'
 ERROR_STATUS_CUSTOM_MSG = "Response status code {code} does not match the expected code: {exp}"
 
-Model = TypeVar("Model", bound=BaseModel)
-R = TypeVar("R", bound=BaseModel)
-E = TypeVar("E", bound=BaseModel | None)
-
 _UNSET = object()
 
 
-class CustomResponse(Generic[R, E]):
+class CustomResponse[R: BaseModel, E: BaseModel | None]:
     """Extend the standard Response with model validation support."""
 
     __slots__ = [
@@ -181,9 +179,9 @@ class CustomResponse(Generic[R, E]):
         logger.debug("Successfully converted the response body to a DTO: {}", result)
 
         if is_error_model:
-            self._neg_dto = result
+            self._neg_dto = result  # type: ignore[assignment]
         else:
-            self._dto = result
+            self._dto = result  # type: ignore[assignment]
 
         return result
 
@@ -199,9 +197,9 @@ class CustomResponse(Generic[R, E]):
             "proxy-authorization",
         }
 
-        def format_headers(headers) -> str:
+        def format_headers(headers: Mapping[str, str | bytes]) -> str:
             return "\n".join(
-                f"{key}: {'***REDACTED***' if key.lower() in sensitive_headers else value}"
+                f"{key}: {'***REDACTED***' if key.lower() in sensitive_headers else value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value}"
                 for key, value in headers.items()
             ) or "<empty>"
 
@@ -372,12 +370,12 @@ class CustomResponse(Generic[R, E]):
         return self
 
     @step("Validate the response body against the expected model")
-    def assert_model_valid(
+    def assert_model_valid[Model: BaseModel](
         self,
         expected_model: type[Model] | type[int] | type[str] | type[bool] | None = None,
         is_error_model: bool = False,
         context: dict[str, Any] | None = None,
-    ):
+    ) -> Self:
         """Validate the response body against the expected model.
 
         Args:
@@ -385,7 +383,7 @@ class CustomResponse(Generic[R, E]):
             is_error_model: Whether to use the configured error response model.
             context: Additional context passed to Pydantic validation.
         """
-        model_ = expected_model
+        model_: type[Model] | type[R] | type[E] | type[int] | type[str] | type[bool] | None = expected_model
 
         if model_ is None:
             model_ = self.response_error_model if is_error_model else self.response_model

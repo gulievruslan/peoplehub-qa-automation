@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING, Any, overload
 
 from playwright.sync_api import APIResponse, Locator, Page
 
-from automation.web_pw.pages.base import BasePage
 from automation.web_playwright_custom.pages.base_pw.custom_types import LoggedObjects
 from automation.web_playwright_custom.pages.base_pw.locators import LocatorPW
 from automation.web_playwright_custom.pages.base_pw.utils import _auto_patch_logging, _logged_expect
+from automation.web_pw.pages.base import BasePage
 
 if TYPE_CHECKING:
     from playwright.sync_api import APIResponseAssertions, LocatorAssertions, PageAssertions
@@ -66,8 +66,11 @@ class BasePagePW(BasePage):
     @overload
     def expect(self, target: APIResponse, description: str | None = None) -> APIResponseAssertions: ...
 
+
     def expect(self, target: LoggedObjects, description: str | None = None) -> Any:
         """Create a Playwright expectation for the given target."""
+        target_inner: Locator | Page | APIResponse
+
         if isinstance(target, LocatorPW):
             if description is None:
                 description = str(target)
@@ -85,3 +88,4 @@ class BasePagePW(BasePage):
             return _logged_expect(target=target_inner, description=description)
 
         raise TypeError(f"Unsupported expectation target type: {type(target_inner).__name__}")
+

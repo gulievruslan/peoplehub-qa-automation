@@ -6,11 +6,12 @@ import re
 import sys
 from collections.abc import Container
 from pathlib import Path
+from types import FrameType
 from typing import Any
 
 from pytest_check import check
 
-from automation.custom.allure.custom_allure import step
+from automation.custom.allure_custom.custom_allure import step
 from automation.custom.logger.project_logger import logger
 
 
@@ -21,7 +22,7 @@ def _caller_location() -> tuple[str, str]:
         A tuple of ("path:line (function)", stripped source line).
         Falls back to ("<unknown>", "") if no suitable frame is found.
     """
-    frame = sys._getframe(1)
+    frame: FrameType | None = sys._getframe(1)
     while frame is not None:
         module: str = frame.f_globals.get("__name__", "")
         if module != __name__ and not module.startswith("pytest_check"):

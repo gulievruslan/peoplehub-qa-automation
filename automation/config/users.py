@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from pydantic import SecretStr
 
 from automation.config.settings import get_settings

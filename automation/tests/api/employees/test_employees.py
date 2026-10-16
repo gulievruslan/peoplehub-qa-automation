@@ -1,11 +1,11 @@
-from allure import story, title
+from allure import story
 from pytest import mark
-from qase.pytest import qase
 
 from automation.api.employees import Employees
 from automation.config.users import ADMIN
 from automation.custom.custom_typing import Fixture
-from automation.custom.generators.randoms import get_random_string, get_random_email, get_random_phone
+from automation.custom.generators.randoms import get_random_email, get_random_phone, get_random_string
+from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.dto.schema.employees_models import EmployeeStatus
 from automation.tests.allure_constants import PeopleHubApi
 from automation.tests.api.custom_types import EmployeeData
@@ -16,16 +16,16 @@ from automation.tests.constants import FIRST_NAME_RANDOM
 @mark.employees
 class TestEmployees(PeopleHubApi):
 
-    @qase.id(id=60)
-    @title("Get employees list")
+    @typed_qase_id(qase_id=60)
+    @typed_title(value="Get employees list")
     def test_get_employees_list(self):
         response = Employees(user=ADMIN).get_employees()
 
         response.assert_status_code()
         response.assert_model_valid()
 
-    @qase.id(id=61)
-    @title("Create employee with valid data")
+    @typed_qase_id(qase_id=61)
+    @typed_title(value="Create employee with valid data")
     def test_create_employee(
         self,
         create_employee_first_name: Fixture[str],
@@ -45,8 +45,8 @@ class TestEmployees(PeopleHubApi):
         response.assert_status_code(expected_code=201)
         response.assert_model_valid()
 
-    @qase.id(id=62)
-    @title("Get employee by ID")
+    @typed_qase_id(qase_id=62)
+    @typed_title(value="Get employee by ID")
     def test_get_employee_by_id(self, create_employee_and_delete: Fixture[EmployeeData]):
         response = Employees(user=ADMIN).get_employee_by_id(
             employee_id=create_employee_and_delete['employee_id'],
@@ -55,16 +55,16 @@ class TestEmployees(PeopleHubApi):
         response.assert_status_code()
         response.assert_model_valid()
 
-    @qase.id(id=147)
-    @title("Delete employee")
+    @typed_qase_id(qase_id=147)
+    @typed_title(value="Delete employee")
     @mark.parametrize("create_employee_and_delete", [{"need_teardown": False}], indirect=True)
     def test_delete_employee(self, create_employee_and_delete: Fixture[EmployeeData]):
         response = Employees(user=ADMIN).delete_employee(employee_id=create_employee_and_delete['employee_id'])
 
         response.assert_status_code(expected_code=204)
 
-    @qase.id(id=149)
-    @title("Update employee")
+    @typed_qase_id(qase_id=149)
+    @typed_title(value="Update employee")
     def test_update_employee(self, create_employee_and_delete: Fixture[EmployeeData]):
         response = Employees(user=ADMIN).update_employee(
             first_name=FIRST_NAME_RANDOM.format(random_string=get_random_string()),

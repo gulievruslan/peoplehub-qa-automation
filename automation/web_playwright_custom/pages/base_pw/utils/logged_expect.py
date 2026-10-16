@@ -5,8 +5,8 @@ from typing import Any, overload
 from playwright.sync_api import APIResponse, Locator, Page, expect
 
 from automation.web_playwright_custom.pages.base_pw.locators.locators import LocatorPW
-from automation.web_playwright_custom.pages.base_pw.utils.get_description import get_description
 from automation.web_playwright_custom.pages.base_pw.utils import _auto_patch_logging
+from automation.web_playwright_custom.pages.base_pw.utils.get_description import get_description
 
 
 @overload

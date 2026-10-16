@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, TypeAlias
+from typing import Literal
 
 
 @dataclass(frozen=True)
@@ -18,7 +18,7 @@ class Button:
     name: str
     data_testid: str | None = None
 
-    def __post_init__(self) -> None:
+    def __post_init__(self):
         """Validate the button description."""
 
         if not self.name.strip():
@@ -45,7 +45,7 @@ class SelectorStep:
     value: str
     nth: int | None = None
 
-    def __post_init__(self) -> None:
+    def __post_init__(self):
         """Validate the selector step."""
 
         if not self.value.strip():
@@ -73,7 +73,7 @@ class NestedSelector:
     child: SelectorChain
 
 
-SelectorChain: TypeAlias = SelectorStep | NestedSelector
+type SelectorChain = SelectorStep | NestedSelector
 
 
 def by_test_id(test_id: str) -> SelectorStep:

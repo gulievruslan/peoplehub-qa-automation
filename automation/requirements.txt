@@ -1,11 +1,12 @@
 # API testing
-pytest==9.1.1
+pytest==9.0.2
 requests==2.34.2
 pytest-xdist==3.8.0
 pytest-check==2.9.1
 
 # Test reports
 allure-pytest==2.16.2
+Pillow==12.3.0
 
 # Test data
 mimesis==22.2.0
@@ -26,7 +27,7 @@ qase-pytest==9.0.0
 ruff==0.16.10
 isort==9.0.2
 mypy==2.4.0
-
+pre-commit==4.7.0
 
 # Web testing
 playwright==1.64.0

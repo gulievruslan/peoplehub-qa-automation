@@ -5,7 +5,8 @@ from automation.api.base import Base
 from automation.custom.response.custom_response import CustomResponse
 from automation.dto.schema.auth_models import InvalidCredentialsResponse
 from automation.dto.schema.notifications_models import (
-    NotificationData, UnreadCountResponse,
+    NotificationData,
+    UnreadCountResponse,
 )
 
 

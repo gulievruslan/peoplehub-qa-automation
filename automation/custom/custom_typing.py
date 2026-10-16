@@ -1,5 +1,6 @@
 """Module contains custom types"""
-from typing import Annotated, Generator, TypeVar
+from collections.abc import Generator
+from typing import Annotated, TypeVar
 
 import pytest
 

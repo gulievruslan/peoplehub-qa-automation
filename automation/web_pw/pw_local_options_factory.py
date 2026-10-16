@@ -20,7 +20,19 @@ class PWLocalOptionsFactory:
         with config_path.open("rb") as config_file:
             config = tomllib.load(config_file)
 
-        return config.get("tool", {}).get("peoplehub", {}).get("playwright", {})
+        tool_config = config.get("tool", {})
+        if not isinstance(tool_config, dict):
+            return {}
+
+        peoplehub_config = tool_config.get("peoplehub", {})
+        if not isinstance(peoplehub_config, dict):
+            return {}
+
+        playwright_config = peoplehub_config.get("playwright", {})
+        if not isinstance(playwright_config, dict):
+            return {}
+
+        return playwright_config
 
     @staticmethod
     def get_launch_args() -> dict[str, Any]:

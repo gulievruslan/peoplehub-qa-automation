@@ -1,10 +1,8 @@
 """Module containing basic interaction methods for Page Objects."""
-
 from allure import step
 from playwright.sync_api import Locator, Page, Position
 
-from automation.custom.logger.project_logger import logger
-from automation.web_playwright_custom.pages.base_pw import PlaywrightLocator, LocatorPW
+from automation.web_playwright_custom.pages.base_pw import LocatorPW, PlaywrightLocator
 from automation.web_pw.pages.people_hub.constants import TIME_ACTION
 from automation.web_pw.pages.people_hub.custom_types import Button, SelectorChain, SelectorStep
 
@@ -61,7 +59,7 @@ class BaseActionsMixin:
         x_offset: int = 0,
         y_offset: int = 0,
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Hover over an element, optionally offset from its center.
 
         Args:
@@ -93,7 +91,7 @@ class BaseActionsMixin:
         locator: PlaywrightLocator,
         value: str = "",
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Clear an input and optionally type text character by character.
 
         Args:
@@ -113,7 +111,7 @@ class BaseActionsMixin:
         locator: PlaywrightLocator,
         key: str,
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Press a keyboard key while the element is focused.
 
         Args:
@@ -124,7 +122,7 @@ class BaseActionsMixin:
 
         locator.press(key=key, timeout=timeout)
 
-    def click_on_button(self, button: Button) -> None:
+    def click_on_button(self, button: Button):
         """Click a button using its description.
 
         Locator priority:
@@ -175,8 +173,14 @@ class BaseActionsMixin:
         selector: SelectorChain | PlaywrightLocator,
         is_force: bool = False,
         description: str = "",
-    ) -> None:
-        """Click an element identified by a selector chain or locator."""
+    ):
+        """Click an element identified by a selector chain or locator.
+
+        Args:
+            selector: Selector chain or locator.
+            is_force: force bool parameter
+            description: element description.
+        """
         locator = selector if isinstance(selector, (LocatorPW, Locator)) else self._build_locator(selector)
         desc = description or getattr(selector, "name", str(selector))
         locator.describe(description=desc).click(force=is_force, timeout=TIME_ACTION)

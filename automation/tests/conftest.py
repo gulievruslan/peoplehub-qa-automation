@@ -1,7 +1,6 @@
 
 import allure
 
-
 QASE_PROJECT_CODE = "PEOPLEHUB"
 QASE_CASE_URL = "https://app.qase.io/case/{project_code}-{case_id}"
 

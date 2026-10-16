@@ -35,8 +35,80 @@ jobs:
         working-directory: app/frontend
         run: npm run build
 
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: automation/requirements.txt
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r automation/requirements.txt
+
+      - name: Run quality checks
+        id: quality
+        shell: bash
+        run: |
+          mkdir -p quality-reports
+          failed=0
+
+          echo "::group::Ruff"
+          ruff check automation --output-format=json \
+            --output-file=quality-reports/ruff.json
+          ruff_status=$?
+          if [ "$ruff_status" -ne 0 ]; then
+            failed=1
+            echo "::error::Ruff checks failed."
+            ruff check automation
+          fi
+          echo "::endgroup::"
+
+          echo "::group::isort"
+          isort --check-only --diff automation \
+            > quality-reports/isort.txt 2>&1
+          isort_status=$?
+          if [ "$isort_status" -ne 0 ]; then
+            failed=1
+            cat quality-reports/isort.txt
+            echo "::error::isort checks failed."
+          fi
+          echo "::endgroup::"
+
+          echo "::group::mypy"
+          mypy automation > quality-reports/mypy.txt 2>&1
+          mypy_status=$?
+          if [ "$mypy_status" -ne 0 ]; then
+            failed=1
+            cat quality-reports/mypy.txt
+            echo "::error::mypy checks failed."
+          fi
+          echo "::endgroup::"
+
+          exit "$failed"
+
+      - name: Upload Quality Gate reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: quality-gate-reports
+          path: quality-reports/
+          if-no-files-found: warn
+          retention-days: 14
+
   api-tests:
     name: API Tests
+    needs: [quality-gate]
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -104,6 +176,7 @@ jobs:
 
   web-tests:
     name: Playwright Tests
+    needs: [quality-gate]
     outputs:
       web_tests_exist: ${{ steps.web-tests.outputs.exists }}
     runs-on: ubuntu-latest
@@ -143,7 +216,9 @@ jobs:
 
       - name: Install Python dependencies
         if: steps.web-tests.outputs.exists == 'true'
-        run: python -m pip install -r automation/requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r automation/requirements.txt
 
       - name: Install frontend dependencies
         if: steps.web-tests.outputs.exists == 'true'
@@ -161,6 +236,8 @@ jobs:
 
       - name: Run Playwright tests
         if: steps.web-tests.outputs.exists == 'true'
+        env:
+          CI: "true"
         run: |
           python -m pytest automation/tests/web \
             --alluredir=allure-results \
@@ -181,8 +258,8 @@ jobs:
     name: Allure Report
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [api-tests, web-tests]
-    if: always() && github.event_name != 'pull_request'
+    needs: [ quality-gate, api-tests, web-tests ]
+    if: always() && needs.quality-gate.result == 'success' && github.event_name != 'pull_request'
 
     steps:
       - name: Checkout repository
@@ -203,7 +280,7 @@ jobs:
           path: artifacts/api-test-results
 
       - name: Download Web test results
-        if: needs.web-tests.result == 'success'
+        if: always()
         continue-on-error: true
         uses: actions/download-artifact@v5
         with:
@@ -239,7 +316,7 @@ jobs:
           node-version: "22"
 
       - name: Install Allure CLI
-        run: npm install -g allure-commandline
+        run: npm install -g allure_custom-commandline
 
       - name: Restore Allure history
         shell: bash
@@ -250,11 +327,11 @@ jobs:
           fi
 
       - name: Generate Allure report
-        run: allure generate allure-results --clean --output allure-history
+        run: allure_custom generate allure_custom-results --clean --output allure_custom-history
 
       - name: Publish Allure report
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
+          publish_dir: allure_custom-history

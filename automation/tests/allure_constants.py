@@ -1,5 +1,5 @@
-"""Модуль содержит класс для хранения констант разметки сервисов в allure"""
-from allure import epic, feature
+"""Модуль содержит класс для хранения констант разметки сервисов в allure_custom"""
+from allure import epic
 from pytest import mark
 
 

@@ -1,9 +1,10 @@
 """Random data generator"""
 
 import string
+from collections.abc import Sequence
 from enum import Enum
 from random import randint, sample
-from typing import Sequence, TypeVar, overload, Literal
+from typing import Any, Literal, overload
 
 from mimesis.locales import Locale
 from mimesis.providers import Datetime, Person
@@ -11,8 +12,6 @@ from mimesis.random import Random
 
 from automation.custom.generators.log_result_to_allure import log_result_to_allure
 from automation.custom.logger.project_logger import logger
-
-_T = TypeVar("_T")
 
 
 class AlphabetEnum(Enum):
@@ -122,17 +121,16 @@ def get_random_email(
 
 
 @overload
-def get_random(sequence: Sequence[_T], count: Literal[1], needs_allure: bool = True) -> _T: ...
+def get_random[T](sequence: Sequence[T], count: Literal[1], needs_allure: bool = True) -> T: ...
 
 
 @overload
-def get_random(sequence: Sequence[_T], count: int = ..., needs_allure: bool = True) -> list[_T]: ...
+def get_random[T](sequence: Sequence[T], count: int, needs_allure: bool = True) -> T | list[T]: ...
 
 
 @log_result_to_allure("Get a random value or sample from a sequence")
-def get_random(sequence: Sequence[_T], count: int = 1, needs_allure: bool = True, **kwargs) -> _T | list[_T]:
+def get_random[T](sequence: Sequence[T], count: int = 1, needs_allure: bool = True, **kwargs: Any) -> T | list[T]:
     """Get a random value or sample from the provided sequence.
-
     Args:
         sequence: Any sequence from which to select a random element or sample.
         count: The number of elements to select. Defaults to 1.

@@ -1,12 +1,11 @@
 """Custom date and time utilities."""
 
 from collections import namedtuple
-from datetime import date, datetime, timedelta, timezone, tzinfo
-from typing import Literal, Self, TypeAlias
+from datetime import UTC, date, datetime, timedelta, tzinfo
+from typing import Literal, Self
+
 from automation.custom.exceptions import customdate_time_exceptions
-
 from automation.custom.logger.project_logger import logger
-
 
 MonthData = namedtuple("MonthData", ["subject", "abbr"])
 
@@ -33,12 +32,9 @@ MONTHS = {
     for number in range(1, 13)
 }
 
-DateInput: TypeAlias = (
-    datetime | date | tuple[str, str] | Literal["min", "max", "unix_min"] | None
-)
-TimeSpec: TypeAlias = Literal[
-    "auto", "hours", "minutes", "seconds", "milliseconds", "microseconds"
-]
+type DateInput = datetime | date | tuple[str, str] | Literal["min", "max", "unix_min"] | None
+
+type TimeSpec = Literal["auto", "hours", "minutes", "seconds", "milliseconds", "microseconds"]
 
 
 class CustomDateTime:
@@ -251,7 +247,7 @@ class CustomDateTime:
             raise ValueError("The working_day and holiday flags cannot be combined.")
 
         base_datetime = (
-            datetime.now(timezone.utc).replace(tzinfo=None) if utc else self._dt
+            datetime.now(UTC).replace(tzinfo=None) if utc else self._dt
         )
 
         offset = timedelta(

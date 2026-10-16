@@ -2,9 +2,9 @@
 
 import json
 from collections.abc import Callable, Sequence
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Any, Literal, cast
 
-from automation.custom.allure.custom_allure import step
+from automation.custom.allure_custom.custom_allure import step
 from automation.custom.asserts.soft_assert import soft_assert
 from automation.web_pw.pages.people_hub.constants import TIME_ACTION
 
@@ -30,7 +30,7 @@ class BrowserActionsMixin(_Base):
     def refresh(
         self,
         wait_until: Literal["commit", "domcontentloaded", "load", "networkidle"] | None = "domcontentloaded",
-    ) -> None:
+    ):
         """Reload the current page.
 
         Args:
@@ -39,7 +39,7 @@ class BrowserActionsMixin(_Base):
         self.page.reload(wait_until=wait_until)
 
     @step(title='Switch to the tab whose URL contains "{url_part}"')
-    def switch_to_tab_by_url(self, url_part: str) -> None:
+    def switch_to_tab_by_url(self, url_part: str):
         """Bring the first tab containing the specified URL fragment to the foreground.
 
         Args:
@@ -59,7 +59,7 @@ class BrowserActionsMixin(_Base):
         raise RuntimeError(f'No tab found with a URL containing "{url_part}".')
 
     @step(title="Switch to the tab at index {index}")
-    def switch_to_tab_by_index(self, index: int) -> None:
+    def switch_to_tab_by_index(self, index: int):
         """Bring a tab at the specified zero-based index to the foreground.
 
         Args:
@@ -76,7 +76,7 @@ class BrowserActionsMixin(_Base):
         pages[index].bring_to_front()
 
     @step(title="Close the current tab")
-    def close_current_tab(self) -> None:
+    def close_current_tab(self):
         """Close the current tab and bring a neighboring tab to the foreground.
 
         Raises:
@@ -97,7 +97,7 @@ class BrowserActionsMixin(_Base):
             remaining_pages[next_index].bring_to_front()
 
     @step(title='Close the tab whose URL contains "{url_part}"')
-    def close_tab_by_url(self, url_part: str) -> None:
+    def close_tab_by_url(self, url_part: str):
         """Close the first tab containing the specified URL fragment.
 
         Args:
@@ -128,8 +128,10 @@ class BrowserActionsMixin(_Base):
         """Return the browser storage object name for a supported storage type."""
         if storage_type == "local":
             return "localStorage"
+
         if storage_type == "session":
             return "sessionStorage"
+
         raise ValueError(f'Unsupported storage type "{storage_type}". Use "local" or "session".')
 
     @step(title="Get data from browser storage")
@@ -158,14 +160,14 @@ class BrowserActionsMixin(_Base):
                 return result;
             }
         """
-        return self.page.evaluate(expression=script, arg=storage_name)
+        return cast(dict[str, str], self.page.evaluate(expression=script, arg=storage_name))
 
     @step(title="Insert data into browser storage")
     def insert_storage_data(
         self,
         storage_type: StorageType = "local",
         data: dict[str, Any] | None = None,
-    ) -> None:
+    ):
         """Insert or update key-value pairs in browser storage.
 
         Strings are stored as-is; other values are serialized as JSON.
@@ -191,7 +193,7 @@ class BrowserActionsMixin(_Base):
         self,
         storage_type: StorageType = "local",
         keys: str | Sequence[str] | None = None,
-    ) -> None:
+    ):
         """Remove selected keys from browser storage.
 
         Args:
@@ -211,7 +213,7 @@ class BrowserActionsMixin(_Base):
             )
 
     @step(title="Accept JavaScript dialog")
-    def accept_alert(self, action: Callable[[], None], timeout: float = TIME_ACTION) -> None:
+    def accept_alert(self, action: Callable[[], None], timeout: float = TIME_ACTION):
         """Accept a JavaScript dialog triggered by an action.
 
         Args:
@@ -224,7 +226,7 @@ class BrowserActionsMixin(_Base):
         dialog_info.value.accept()
 
     @step(title="Dismiss JavaScript dialog")
-    def dismiss_alert(self, action: Callable[[], None], timeout: float = TIME_ACTION) -> None:
+    def dismiss_alert(self, action: Callable[[], None], timeout: float = TIME_ACTION):
         """Dismiss a JavaScript dialog triggered by an action.
 
         Args:
@@ -242,7 +244,7 @@ class BrowserActionsMixin(_Base):
         text: str,
         action: Callable[[], None],
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Submit text to a JavaScript prompt triggered by an action.
 
         Args:
@@ -256,7 +258,7 @@ class BrowserActionsMixin(_Base):
         dialog_info.value.accept(prompt_text=text)
 
     @step(title="Check exact URL match")
-    def check_current_url(self, expected_url: str) -> None:
+    def check_current_url(self, expected_url: str) :
         """Soft-check that the current URL exactly matches the expected URL."""
         actual_url = self.page.url
         soft_assert(
@@ -265,7 +267,7 @@ class BrowserActionsMixin(_Base):
         )
 
     @step(title="Check the number of open tabs")
-    def check_tabs_count(self, expected_count: int) -> None:
+    def check_tabs_count(self, expected_count: int):
         """Soft-check the number of open tabs."""
         if expected_count < 0:
             raise ValueError("Expected tab count must not be negative.")

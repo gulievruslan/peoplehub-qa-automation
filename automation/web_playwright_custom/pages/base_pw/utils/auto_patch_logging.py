@@ -1,17 +1,13 @@
-
 """Utilities for logging public callable attributes of an object."""
 
 from collections.abc import Callable
 from functools import wraps
-from typing import Any, ParamSpec, TypeVar
+from typing import Any, cast
 
 from automation.custom.logger.project_logger import logger
 
-P = ParamSpec("P")
-RET = TypeVar("RET")
 
-
-def _create_wrapper(
+def _create_wrapper[**P, RET](
     method: Callable[P, RET],
     name: str,
     log_prefix: str,
@@ -34,7 +30,7 @@ def _create_wrapper(
             logger.exception(f"{log_prefix}.{name} raised an exception")
             raise
 
-    setattr(wrapper, "_auto_patch_logging_wrapper", True)
+    cast(Any, wrapper)._auto_patch_logging_wrapper = True
     return wrapper
 
 

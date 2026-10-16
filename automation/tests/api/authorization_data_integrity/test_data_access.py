@@ -1,8 +1,8 @@
-from allure import story, title
+from allure import story
 from pytest import mark
-from qase.pytest import qase
 
 from automation.api.employees import Employees
+from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubApi
 from automation.tests.api.enums import NegativeAuth
 
@@ -11,8 +11,8 @@ from automation.tests.api.enums import NegativeAuth
 @mark.data_access
 class TestDataAccess(PeopleHubApi):
 
-    @qase.id(id=52)
-    @title("Access protected endpoint without authentication")
+    @typed_qase_id(qase_id=52)
+    @typed_title(value="Access protected endpoint without authentication")
     def test_access_protect(self):
         response = Employees().get_employees()
 

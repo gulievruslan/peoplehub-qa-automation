@@ -3,7 +3,7 @@
 from enum import StrEnum
 from typing import Any
 
-from pydantic import EmailStr, StrictInt, StrictStr, Field
+from pydantic import EmailStr, Field, StrictInt, StrictStr
 
 from automation.dto.schema.generic import PeopleHubDTO
 

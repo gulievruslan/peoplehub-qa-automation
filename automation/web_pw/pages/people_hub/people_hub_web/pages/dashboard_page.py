@@ -4,6 +4,7 @@ from playwright.sync_api import Page
 
 from automation.web_pw.pages.people_hub.pages.base_page import BasePeopleHubPage
 
+
 class DashboardPage(BasePeopleHubPage):
     """Page Object for the PeopleHub dashboard."""
 

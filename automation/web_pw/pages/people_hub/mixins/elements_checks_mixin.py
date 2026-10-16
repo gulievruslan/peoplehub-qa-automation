@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
-from automation.custom.allure.custom_allure import step
+from automation.custom.allure_custom.custom_allure import step
 from automation.web_pw.pages.people_hub.constants import TIME_ACTION
 from automation.web_pw.pages.people_hub.mixins import BaseChecksMixin
 
@@ -29,7 +29,7 @@ class ChecksMixin(_Base):
         self,
         buttons: Iterable[tuple[str, str | None, bool]],
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Soft-check button visibility and enabled state.
 
         Each tuple contains the button name, an optional test ID, and the expected enabled state.

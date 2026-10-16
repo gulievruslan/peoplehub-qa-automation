@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from automation.custom.logger import log_response, log_request
+from automation.custom.logger import log_request, log_response
 from automation.custom.logger.project_logger import logger
 from automation.custom.model.model import convert_models_to_request
 from automation.custom.response.custom_response import CustomResponse
@@ -57,7 +57,7 @@ class ApiClient:
 
         Args:
             settings: Connection settings. Defaults are read from environment variables.
-            headers: Default headers sent with every request.
+            headers: Default components sent with every request.
         """
         self.settings: ClientSettings = settings or ClientSettings()
         self.headers: dict[str, str] = dict(headers or {})
@@ -172,7 +172,7 @@ class ApiClient:
         data: Mapping[str, Any] | list | str | bytes | BaseModel | None = None,
         json: Mapping[str, Any] | BaseModel | list | None = None,
         files: Mapping[str, Any] | list | None = None,
-        cookies: Mapping[str, Any] | CookieJar | None = None,
+        cookies: Mapping[str, str] | CookieJar | None = None,
         timeout: float | None = None,
         allow_redirects: bool = True,
         needs_allure: bool = True,
@@ -215,6 +215,14 @@ class ApiClient:
             **kwargs,
         )
 
+        request_cookies: dict[str, str] | CookieJar | None
+
+        if isinstance(cookies, Mapping):
+            request_cookies = dict(cookies)
+
+        else:
+            request_cookies = cookies
+
         prepared = self.session.prepare_request(
             requests.Request(
                 method=method,
@@ -224,7 +232,7 @@ class ApiClient:
                 data=data_body,
                 json=json_body,
                 files=files,
-                cookies=cookies,
+                cookies=request_cookies,
             )
         )
 

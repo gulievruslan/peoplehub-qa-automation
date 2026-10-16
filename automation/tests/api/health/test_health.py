@@ -1,9 +1,9 @@
-from allure import story, title
+from allure import story
 from pytest import mark
-from qase.pytest import qase
 
 from automation.api.health import Health
 from automation.config.users import ADMIN
+from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubApi
 from automation.tests.api.enums import AppStatuses
 
@@ -12,8 +12,8 @@ from automation.tests.api.enums import AppStatuses
 @mark.health
 class TestHealth(PeopleHubApi):
 
-    @qase.id(id=71)
-    @title("Check application health")
+    @typed_qase_id(qase_id=71)
+    @typed_title(value="Check application health")
     def test_check_app_health(self):
         response = Health(user=ADMIN).get_health()
 
@@ -21,8 +21,8 @@ class TestHealth(PeopleHubApi):
         response.assert_model_valid()
         assert response.dto().status == AppStatuses.OK
 
-    @qase.id(id=72)
-    @title("Check database health")
+    @typed_qase_id(qase_id=72)
+    @typed_title(value="Check database health")
     def test_check_db_health(self):
         response = Health(user=ADMIN).get_database_health()
 

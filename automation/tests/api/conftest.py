@@ -2,13 +2,13 @@
 
 import pytest
 from _pytest.fixtures import SubRequest, fixture
-from allure import title
 
 from automation.api.auth import AuthClient
 from automation.config.users import TestUser
 from automation.custom.custom_typing import Fixture, FixtureYield
 from automation.custom.generators.randoms import get_random_string
 from automation.custom.logger.log_fixture import log_fixture
+from automation.custom.typed_decorators import typed_title
 from automation.dto.schema.auth_models import UserResponse
 from automation.tests.api.custom_types import EmployeeData
 from automation.tests.api.helper_functions import (
@@ -25,12 +25,12 @@ from automation.tests.api.helper_functions import (
     get_leave_requests_ids_by_reason,
     get_payroll_data_by_id,
 )
-from automation.tests.constants import FIRST_NAME_RANDOM, LEAVE_REQUEST_RANDOM, DEPARTMENT_NAME
+from automation.tests.constants import DEPARTMENT_NAME, FIRST_NAME_RANDOM, LEAVE_REQUEST_RANDOM
 
 
 @pytest.fixture
 @log_fixture
-@title('Authenticate the specified user')
+@typed_title(value='Authenticate the specified user')
 def get_user_token(request: SubRequest) -> str:
     """Authenticate the specified user.
 
@@ -53,7 +53,7 @@ def create_random_department_name() -> str:
 
 @fixture
 @log_fixture
-@title('Create a new department and delete after test.')
+@typed_title(value='Create a new department and delete after test.')
 def create_department_and_delete(
     request: SubRequest, create_random_department_name: Fixture[str]
 ) -> FixtureYield[int]:
@@ -75,7 +75,7 @@ def create_department_and_delete(
 
 @fixture
 @log_fixture
-@title('Delete a department after test.')
+@typed_title(value='Delete a department after test.')
 def delete_department(create_random_department_name: Fixture[str]):
     """Delete a department after test.
 
@@ -96,7 +96,7 @@ def delete_department(create_random_department_name: Fixture[str]):
 
 @fixture
 @log_fixture
-@title('Create a new employee and delete after test.')
+@typed_title(value='Create a new employee and delete after test.')
 def create_employee_and_delete(
     request: SubRequest, create_department_and_delete: Fixture[int]
 ) -> FixtureYield[EmployeeData]:
@@ -123,7 +123,7 @@ def create_employee_first_name() -> str:
 
 @fixture
 @log_fixture
-@title('Delete an employee after test.')
+@typed_title(value='Delete an employee after test.')
 def delete_employee_after_test(create_employee_first_name: str):
     """Delete an employee after test.
 
@@ -142,7 +142,7 @@ def create_employee_leave_request() -> str:
 
 @fixture
 @log_fixture
-@title('Create a new leave request and delete after test.')
+@typed_title(value='Create a new leave request and delete after test.')
 def create_leave_request_and_delete(request: SubRequest, create_employee_and_delete: Fixture[EmployeeData]) -> FixtureYield[int]:
     """Create a new leave request and delete after test.
 
@@ -164,7 +164,7 @@ def create_leave_request_and_delete(request: SubRequest, create_employee_and_del
 
 @fixture
 @log_fixture
-@title('Delete a leave request after test.')
+@typed_title(value='Delete a leave request after test.')
 def delete_leave_request_after_test(create_employee_leave_request: Fixture[str]) -> FixtureYield[None]:
     """Delete a leave request after test.
 
@@ -181,7 +181,7 @@ def delete_leave_request_after_test(create_employee_leave_request: Fixture[str])
 
 @fixture
 @log_fixture
-@title('Get my information')
+@typed_title(value='Get my information')
 def get_my_information(request: SubRequest) -> UserResponse:
     """Get my information
 
@@ -199,7 +199,7 @@ def get_my_information(request: SubRequest) -> UserResponse:
 
 @fixture
 @log_fixture
-@title('Create payroll record and delete after test.')
+@typed_title(value='Create payroll record and delete after test.')
 def create_payroll_record_and_delete_after_test(
     request: SubRequest, create_employee_and_delete: Fixture[EmployeeData]
 ) -> FixtureYield[int]:
@@ -221,7 +221,7 @@ def create_payroll_record_and_delete_after_test(
 
 @fixture
 @log_fixture
-@title('Delete payroll after test')
+@typed_title(value='Delete payroll after test')
 def delete_payroll_after_test(
     request: SubRequest, create_employee_and_delete: Fixture[EmployeeData]
 ) -> FixtureYield[None]:

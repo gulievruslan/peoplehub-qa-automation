@@ -6,11 +6,12 @@ from typing import TYPE_CHECKING, Literal
 
 from playwright.sync_api import TimeoutError
 
-from automation.custom.allure.custom_allure import step
+from automation.custom.allure_custom.custom_allure import step
 from automation.web_pw.pages.people_hub.constants import TIME_ACTION
 
 if TYPE_CHECKING:
     from automation.web_playwright_custom.pages.base_pw import BasePagePW, PlaywrightLocator
+
 
     class _Base(BasePagePW):
         """Base class used for static type checking."""
@@ -51,7 +52,7 @@ class WaiterActionsMixin(_Base):
         locator: PlaywrightLocator,
         state: Literal["attached", "detached", "hidden", "visible"] = "visible",
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Wait until an element reaches the requested state.
 
         Args:
@@ -69,7 +70,7 @@ class WaiterActionsMixin(_Base):
         self,
         locator: PlaywrightLocator,
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Wait until an element is hidden or detached from the DOM.
 
         Args:
@@ -83,7 +84,7 @@ class WaiterActionsMixin(_Base):
         self,
         locator: PlaywrightLocator,
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Wait for an element to become visible and then hidden.
 
         Each phase receives the specified timeout.
@@ -100,7 +101,7 @@ class WaiterActionsMixin(_Base):
         self,
         url_part: str,
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Wait until the current URL contains a literal substring.
 
         Args:
@@ -117,7 +118,7 @@ class WaiterActionsMixin(_Base):
         self,
         state: Literal["domcontentloaded", "load", "networkidle"] = "load",
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Wait for the page to reach a specified load state.
 
         Args:
@@ -133,7 +134,7 @@ class WaiterActionsMixin(_Base):
         expected_text: str,
         timeout: float = TIME_ACTION,
         use_contain: bool = False,
-    ) -> None:
+    ):
         """Wait until an element contains or exactly matches the expected text.
 
         Args:
@@ -154,7 +155,7 @@ class WaiterActionsMixin(_Base):
         name: str,
         expected_value: str,
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Wait until an element has the expected attribute value.
 
         Args:
@@ -171,7 +172,7 @@ class WaiterActionsMixin(_Base):
         locator: PlaywrightLocator,
         expected_count: int,
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Wait until the locator matches the expected number of elements.
 
         Args:
@@ -190,7 +191,7 @@ class WaiterActionsMixin(_Base):
         locator: PlaywrightLocator,
         is_enabled: bool = True,
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Wait until an element reaches the expected enabled state.
 
         Args:
@@ -209,7 +210,7 @@ class WaiterActionsMixin(_Base):
         locator: PlaywrightLocator,
         expected_value: str,
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Wait until an input element has the expected value.
 
         Args:
@@ -224,7 +225,7 @@ class WaiterActionsMixin(_Base):
         self,
         expected_url: str,
         timeout: float = TIME_ACTION,
-    ) -> None:
+    ):
         """Wait until the current URL exactly matches the expected URL.
 
         Args:

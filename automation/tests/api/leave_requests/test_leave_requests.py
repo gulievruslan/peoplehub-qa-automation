@@ -1,25 +1,24 @@
-from allure import story, title
+from allure import story
 from pytest import mark
-from qase.pytest import qase
 
 from automation.api.leave_requests import LeaveRequests
 from automation.config.users import ADMIN, EMPLOYEE
 from automation.custom.custom_typing import Fixture
 from automation.custom.generators.custom_date_time import CustomDateTime
-from automation.custom.generators.randoms import get_random_string, get_random_number
+from automation.custom.generators.randoms import get_random_number, get_random_string
+from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.dto.schema.auth_models import UserResponse
 from automation.dto.schema.leave_requests_models import LeaveRequestStatus
 from automation.tests.allure_constants import PeopleHubApi
 from automation.tests.api.enums import LeaveRequestStatuses
-from automation.tests.constants import LEAVE_REQUEST_RANDOM
 
 
 @story("Leave Requests")
 @mark.leave_requests
 class TestLeaveRequests(PeopleHubApi):
 
-    @qase.id(id=63)
-    @title("Get leave requests list")
+    @typed_qase_id(qase_id=63)
+    @typed_title(value="Get leave requests list")
     @mark.parametrize("create_leave_request_and_delete", [{"reason": "Reason created by AT"}], indirect=True)
     def test_get_leave_requests_list(self, create_leave_request_and_delete: Fixture[int]):
         response = LeaveRequests(user=ADMIN).get_leave_requests()
@@ -27,8 +26,8 @@ class TestLeaveRequests(PeopleHubApi):
         response.assert_status_code()
         response.assert_model_valid()
 
-    @qase.id(id=64)
-    @title("Create leave request")
+    @typed_qase_id(qase_id=64)
+    @typed_title(value="Create leave request")
     @mark.parametrize('get_my_information', [EMPLOYEE], indirect=True)
     def test_create_leave_request(
         self,
@@ -51,8 +50,8 @@ class TestLeaveRequests(PeopleHubApi):
         assert response_dto.status == LeaveRequestStatuses.PENDING
         assert response_dto.reason == create_employee_leave_request
 
-    @qase.id(id=65)
-    @title("Get leave request by ID")
+    @typed_qase_id(qase_id=65)
+    @typed_title(value="Get leave request by ID")
     @mark.parametrize("create_leave_request_and_delete", [{"reason": "Reason created by AT"}], indirect=True)
     def test_get_leave_request_by_id(self, create_leave_request_and_delete: Fixture[int]):
         response = LeaveRequests(user=ADMIN).get_leave_request_by_id(
@@ -62,8 +61,8 @@ class TestLeaveRequests(PeopleHubApi):
         response.assert_status_code()
         response.assert_model_valid()
 
-    @qase.id(id=151)
-    @title("Update leave request")
+    @typed_qase_id(qase_id=151)
+    @typed_title(value="Update leave request")
     @mark.parametrize("create_leave_request_and_delete", [{"reason": "Reason created by AT"}], indirect=True)
     def test_update_leave_request(self, create_leave_request_and_delete: Fixture[int]):
         response = LeaveRequests(user=ADMIN).update_leave_request(
@@ -77,8 +76,8 @@ class TestLeaveRequests(PeopleHubApi):
         response.assert_status_code()
         response.assert_model_valid()
 
-    @qase.id(id=152)
-    @title("Delete leave request")
+    @typed_qase_id(qase_id=152)
+    @typed_title(value="Delete leave request")
     @mark.parametrize("create_leave_request_and_delete", [{"need_teardown": False}], indirect=True)
     def test_delete_leave_request(self, create_leave_request_and_delete: Fixture[int]):
         response = LeaveRequests(user=ADMIN).delete_leave_request(leave_request_id=create_leave_request_and_delete)

@@ -13,7 +13,6 @@ import requests
 
 from automation.custom.logger.project_logger import logger
 
-
 __all__ = ["log_request", "log_response"]
 
 MASK: str = "***"
@@ -75,7 +74,7 @@ def _mask_data(value: Any) -> Any:
 
 
 def _mask_headers(headers: Mapping[str, str | bytes]) -> dict[str, str]:
-    """Mask values of sensitive headers."""
+    """Mask values of sensitive components."""
     masked: dict[str, str] = {}
 
     for name, raw_value in headers.items():
@@ -171,7 +170,7 @@ def _truncate(text: str, limit: int = MAX_LOG_BODY_LENGTH) -> str:
 
 
 def _format_headers(headers: Mapping[str, str]) -> str:
-    """Render headers as 'Name: value' lines."""
+    """Render components as 'Name: value' lines."""
     return "\n".join(f"{name}: {value}" for name, value in headers.items())
 
 
@@ -278,7 +277,7 @@ def log_request(
         return
 
     with allure.step(title):
-        _attach(text=_format_headers(headers), name="Request headers")
+        _attach(text=_format_headers(headers), name="Request components")
 
         if body_text:
             _attach(text=body_text, name="Request body")
@@ -342,7 +341,7 @@ def log_response(
         return
 
     with allure.step(title):
-        _attach(text=_format_headers(headers), name="Response headers")
+        _attach(text=_format_headers(headers), name="Response components")
 
         if body_text:
             _attach(text=body_text, name="Response body")

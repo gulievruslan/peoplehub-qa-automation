@@ -6,7 +6,6 @@ import sys
 
 from loguru import logger
 
-
 LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG").upper()
 
 LOG_FORMAT = (

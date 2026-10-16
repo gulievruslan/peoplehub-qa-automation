@@ -1,14 +1,13 @@
+"""Log fixture setup, teardown, and failures."""
 from collections.abc import Callable, Generator
 from functools import wraps
 from inspect import isgeneratorfunction
-from typing import Any, TypeVar, cast
+from typing import Any, cast
 
 from automation.custom.logger.project_logger import logger
 
-F = TypeVar("F", bound=Callable[..., Any])
 
-
-def log_fixture(func: F) -> F:
+def log_fixture[F: Callable[..., Any]](func: F) -> F:
     """Log fixture setup, teardown, and failures."""
     fixture_name = func.__name__
 

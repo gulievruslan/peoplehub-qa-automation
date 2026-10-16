@@ -3,12 +3,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Never, NoReturn, TypeAlias
+from collections.abc import Callable
+from typing import Any, Never, NoReturn
 
-from playwright.sync_api import Locator
-
-if TYPE_CHECKING:
-    from automation.web_pw.pages.base import PagePW
+from playwright.sync_api import Locator, Page
 
 
 class LocatorPW:
@@ -24,21 +22,11 @@ class LocatorPW:
         self,
         name: str,
         selector: str | None = None,
-        locator_fn: Callable[["PagePW"], Locator] | None = None,
-        page: "PagePW | None" = None,
+        locator_fn: Callable[[Page], Locator] | None = None,
+        page: Page | None = None,
     ) -> None:
-        """Initialize the locator object.
-
-        Args:
-            name: Element description.
-            selector: String selector (CSS/XPath).
-            locator_fn: Callable that accepts a page and returns a Locator.
-            page: Playwright page object.
-
-        Raises:
-            ValueError: If neither locator type or both locator types are provided.
-        """
-        self.name: str = name
+        """Initialize the locator object."""
+        self.name = name
 
         if (selector is not None) == (locator_fn is not None):
             raise ValueError(
@@ -46,20 +34,16 @@ class LocatorPW:
                 f"Received: {selector=} {locator_fn=}",
             )
 
-        self.selector: str | None = selector
-        self.locator_fn: Callable[["PagePW"], Locator] | None = locator_fn
-        self._page: "PagePW | None" = page
+        self.selector = selector
+        self.locator_fn = locator_fn
+        self._page = page
         self._cached_locator: Locator | None = None
-        self._cached_page: "PagePW | None" = None
+        self._cached_page: Page | None = None
         self._attr_name: str | None = None
-        self._owner: type["PagePW"] | None = None
+        self._owner: type[object] | None = None
 
-    def get_locator(self, page: "PagePW") -> Locator:
-        """Get the Playwright Locator.
-
-        Args:
-            page: Playwright page object.
-        """
+    def get_locator(self, page: Page) -> Locator:
+        """Get the Playwright Locator."""
         if self.locator_fn is not None:
             return self.locator_fn(page)
 
@@ -68,42 +52,19 @@ class LocatorPW:
 
         raise TypeError("The locator must be defined by either a selector or a callable.")
 
-    def format(self, **kwargs: object) -> PlaywrightLocator:
-        """Format a string-based locator.
-
-        Args:
-            **kwargs: Named formatting arguments.
-
-        Returns:
-            A new locator instance with the formatted name and selector.
-
-        Raises:
-            TypeError: If the locator was created using locator_fn.
-        """
+    def format(self, **kwargs: object) -> LocatorPW:
+        """Format a string-based locator."""
         if self.selector is None:
             raise TypeError("A locator created with locator_fn cannot be formatted.")
 
-        new_name = self.name.format(**kwargs)
-        new_selector = self.selector.format(**kwargs)
-
         return LocatorPW(
-            name=new_name,
-            selector=new_selector,
+            name=self.name.format(**kwargs),
+            selector=self.selector.format(**kwargs),
             page=self._page,
         )
 
     def __getattr__(self, item: str) -> Any:
-        """Delegate attribute access to the underlying Locator.
-
-        Args:
-            item: Attribute name.
-
-        Returns:
-            The requested Locator attribute.
-
-        Raises:
-            AttributeError: If the locator is not bound to a page.
-        """
+        """Delegate attribute access to the underlying Locator."""
         if self._page is None:
             raise AttributeError(
                 f'"{type(self).__name__}" is not bound to a page and has no attribute "{item}".',
@@ -128,30 +89,17 @@ class LocatorPW:
 
         return f'Element "name={self.name!r}" using {locator_type}'
 
-    def __set_name__(self, owner: type["PagePW"], name: str) -> None:
-        """Store the attribute name when the locator is declared on a class.
-
-        Args:
-            owner: Class that owns the locator.
-            name: Attribute name.
-        """
+    def __set_name__(self, owner: type[object], name: str) -> None:
+        """Store the attribute name when the locator is declared on a class."""
         self._attr_name = name
         self._owner = owner
 
     def __get__(
         self,
-        instance: "PagePW | None",
-        owner: type["PagePW"],
-    ) -> PlaywrightLocator:
-        """Bind the locator to the page object when accessed through an instance.
-
-        Args:
-            instance: Page object that owns the locator.
-            owner: Class that owns the locator.
-
-        Returns:
-            The locator bound to the instance's page.
-        """
+        instance: object | None,
+        owner: type[object],
+    ) -> LocatorPW:
+        """Bind the locator to the page object when accessed through an instance."""
         if instance is None:
             return self
 
@@ -163,6 +111,11 @@ class LocatorPW:
                 f"{type(instance).__name__}.",
             )
 
+        if not isinstance(page, Page):
+            raise TypeError(
+                f'Expected "page" to be a Playwright Page, got {type(page).__name__}.',
+            )
+
         if self._page is not page:
             self._page = page
             self._cached_locator = None
@@ -170,20 +123,12 @@ class LocatorPW:
 
         return self
 
-    def __set__(self, instance: "PagePW", value: Never) -> NoReturn:
-        """Prevent the locator descriptor from being overwritten on an instance.
-
-        Args:
-            instance: Object that owns the descriptor.
-            value: Value being assigned.
-
-        Raises:
-            AttributeError: Always, because the descriptor is read-only.
-        """
+    def __set__(self, instance: object, value: Never) -> NoReturn:
+        """Prevent the locator descriptor from being overwritten on an instance."""
         raise AttributeError(
             f'Cannot overwrite LocatorPW "{self._attr_name}". '
             "Use formatting instead: .format(param=value).",
         )
 
 
-PlaywrightLocator: TypeAlias = LocatorPW | Locator
+type PlaywrightLocator = LocatorPW | Locator

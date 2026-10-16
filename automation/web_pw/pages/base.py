@@ -1,69 +1,60 @@
-"""Базовый класс для всех страниц — предоставляет общие методы (переход, скриншоты и т.д.)."""
+"""Base class for all pages, providing common methods such as navigation and screenshot comparison."""
 
 from pathlib import Path
-from typing import TypeVar
 
 import pytest
 from allure import attach, attachment_type, step
 from PIL import Image
 from playwright.sync_api import Locator, Page
 
-from automation.custom.config import Config
-
-PagePW = TypeVar(name="PagePW", bound=Page)
-
 
 class BasePage:
-    """Базовый класс страницы с общими методами: открытие URL, проверка визуальных различий."""
+    """Base page class providing common methods for navigation and visual comparison."""
 
-    def __init__(self, page: PagePW, url: str | None = None) -> None:
-        """Инициализация базовой страницы.
+    def __init__(self, page: Page, url: str | None = None):
+        """Initialize the base page.
 
         Args:
-            page: Экземпляр Playwright Page.
-            url: Опциональный URL страницы.
+            page: Playwright Page instance.
+            url: Optional page URL.
         """
         self.page = page
-        self.url = Config.web_url if url is None else url
+        self.url = url
 
-    @step("Открыть URL страницы")
+    @step("Open page URL")
     def get(self) -> "BasePage":
-        """Открыть URL."""
+        """Navigate to the page URL."""
         if self.url is None:
-            raise ValueError("URL не установлен. Укажите url при создании страницы.")
+            raise ValueError("URL is not set. Provide a URL when creating the page.")
+
         self.page.goto(self.url)
         return self
 
     @staticmethod
     def _compare_images(
-            baseline_path: str,
-            current_path: str,
-            diff_path: str,
-            base_name: str,
-            current_name: str,
-            diff_name: str,
-    ) -> None:
-        """Сравнить изображения и прикрепить результаты к отчету.
+        baseline_path: str,
+        current_path: str,
+        diff_path: str,
+        base_name: str,
+        current_name: str,
+        diff_name: str,
+    ):
+        """Compare images and attach the results to the Allure report.
 
         Args:
-            baseline_path: Путь до базового скриншота.
-            current_path: Путь до текущего скриншота.
-            diff_path: Путь до скриншота различий.
-            base_name: Имя базового файла.
-            current_name: Имя текущего файла.
-            diff_name: Имя файла различий.
+            baseline_path: Path to the baseline screenshot.
+            current_path: Path to the current screenshot.
+            diff_path: Path to the difference image.
+            base_name: Baseline screenshot filename.
+            current_name: Current screenshot filename.
+            diff_name: Difference image filename.
         """
         baseline_img = Image.open(baseline_path).convert("RGB")
         current_img = Image.open(current_path).convert("RGB")
 
-        baseline_pixels = baseline_img.load()
-        current_pixels = current_img.load()
-
         diff_check = Image.new("RGB", current_img.size, (0, 0, 0))
-        diff_check_pixels = diff_check.load()
 
         diff = current_img.copy()
-        diff_pixels = diff.load()
 
         width, height = current_img.size
         has_diff = False
@@ -73,18 +64,17 @@ class BasePage:
 
             for i in range(width):
                 for j in range(height):
-                    diff_check_pixels[i, j] = (255, 0, 0)
-                    diff_pixels[i, j] = (255, 0, 0)
-
+                    diff_check.putpixel((i, j), (255, 0, 0))
+                    diff.putpixel((i, j), (255, 0, 0))
         else:
             for i in range(width):
                 for j in range(height):
-                    br, bg, bb = baseline_pixels[i, j]
-                    cr, cg, cb = current_pixels[i, j]
+                    baseline_pixel = baseline_img.getpixel((i, j))
+                    current_pixel = current_img.getpixel((i, j))
 
-                    if br != cr or bg != cg or bb != cb:
-                        diff_check_pixels[i, j] = (255, 0, 0)
-                        diff_pixels[i, j] = (255, 0, 0)
+                    if baseline_pixel != current_pixel:
+                        diff_check.putpixel((i, j), (255, 0, 0))
+                        diff.putpixel((i, j), (255, 0, 0))
                         has_diff = True
 
         if not has_diff:
@@ -101,27 +91,26 @@ class BasePage:
         with open(diff_path, "rb") as f:
             attach(f.read(), name=diff_name, attachment_type=attachment_type.PNG)
 
-        pytest.fail(f"Обнаружены визуальные различия! См. {diff_path}")
+        pytest.fail(f"Visual differences detected! See {diff_path}")
 
-    @step("Проверить скриншот на наличие разницы с эталонным изображением.")
-    def check_screenshot_diff(self, baseline_path: str, locator: Page | Locator) -> None:
-        """Проверить скриншот на наличие разницы с эталонным изображением.
+    @step("Check screenshot for differences from the baseline image")
+    def check_screenshot_diff(self, baseline_path: str, locator: Page | Locator):
+        """Compare a screenshot with its baseline image.
 
         Args:
-            baseline_path: путь до эталона
-            locator: объект Page or Locator
+            baseline_path: Path to the baseline screenshot.
+            locator: Playwright Page or Locator instance.
         """
-
-        with step("Проверить наличие базового скриншота"):
+        with step("Check whether the baseline screenshot exists"):
             baseline_path_obj = Path(baseline_path)
 
             if not baseline_path_obj.exists():
-                with step("Сохранить новый эталонный скриншот"):
+                with step("Save a new baseline screenshot"):
                     baseline_path_obj.parent.mkdir(parents=True, exist_ok=True)
                     locator.screenshot(path=baseline_path)
-                    pytest.fail(f"Эталонный скриншот не найден и был создан: {baseline_path}")
+                    pytest.fail(f"Baseline screenshot was not found and has been created: {baseline_path}")
 
-        with step("Сделать скриншот по переданному локатору"):
+        with step("Capture the current screenshot"):
             screenshot_dir = Path("test_data/temp")
             screenshot_dir.mkdir(parents=True, exist_ok=True)
 
@@ -131,7 +120,7 @@ class BasePage:
 
             locator.screenshot(path=current_path)
 
-        with step("Cравнить изображения"):
+        with step("Compare screenshots"):
             diff_name = base_name.rsplit(sep=".")[0] + "_diff.png"
             diff_path = screenshot_dir / diff_name
             self._compare_images(

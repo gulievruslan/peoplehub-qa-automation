@@ -2,7 +2,6 @@
 
 from collections.abc import Callable
 from functools import wraps
-from typing import ParamSpec, TypeVar
 
 from allure import attach, attachment_type
 
@@ -10,11 +9,8 @@ from automation.custom.logger.project_logger import logger
 from automation.web_playwright_custom.pages.base_pw.custom_errors import BrokenTestError
 from automation.web_playwright_custom.pages.base_pw.utils.extract_page_from_args import _extract_page_from_args
 
-P = ParamSpec("P")
-RET = TypeVar("RET")
 
-
-def business_check_to_broken(func: Callable[P, RET]) -> Callable[P, RET]:
+def business_check_to_broken[**P, RET](func: Callable[P, RET]) -> Callable[P, RET]:
     """Convert AssertionError into BrokenTestError and attach a page screenshot.
 
     Args:
@@ -24,7 +20,6 @@ def business_check_to_broken(func: Callable[P, RET]) -> Callable[P, RET]:
         Playwright's expect() raises AssertionError when an assertion fails.
         This decorator converts that exception into BrokenTestError so that Allure
         can report the test as broken rather than failed.
-
         Use this decorator only for assertions whose failures should be classified
         as test or infrastructure issues, not product defects.
 
@@ -35,7 +30,6 @@ def business_check_to_broken(func: Callable[P, RET]) -> Callable[P, RET]:
     @wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> RET:
         """Execute the function and convert AssertionError into BrokenTestError."""
-
         try:
             return func(*args, **kwargs)
         except AssertionError as error:

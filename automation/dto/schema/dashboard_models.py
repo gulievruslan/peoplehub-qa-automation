@@ -1,7 +1,7 @@
 
 """DTOs for PeopleHub dashboard API."""
 
-from pydantic import Field, RootModel, StrictInt
+from pydantic import Field, StrictInt
 
 from automation.dto.schema.generic import PeopleHubDTO
 

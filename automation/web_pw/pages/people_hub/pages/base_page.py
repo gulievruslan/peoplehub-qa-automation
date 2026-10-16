@@ -13,7 +13,7 @@ from automation.web_pw.pages.people_hub.mixins import (
 class BasePeopleHubPage(BaseActionsMixin, BaseChecksMixin, BrowserActionsMixin, WaiterActionsMixin, BasePagePW):
     """Base class for PeopleHub Page Objects."""
 
-    def __init__(self, page: Page, url: str) -> None:
+    def __init__(self, page: Page, url: str):
         """Initialize the base page.
 
         Args:

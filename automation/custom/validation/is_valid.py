@@ -57,7 +57,8 @@ def is_valid(
                     "Validating a list response with a non-root model. "
                     "Pass a RootModel or a model representing the expected response."
                 )
-                TypeAdapter(list[model]).validate_python(response, context=context)
+                TypeAdapter(list[model]).validate_python(response, context=context)  # type: ignore[valid-type]
+
             else:
                 model.model_validate(response, context=context)
 

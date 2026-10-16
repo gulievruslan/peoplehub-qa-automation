@@ -1,4 +1,4 @@
-"""Константы для работы с API Playwright"""
+"""Constants for working with the Playwright API."""
 
 TIME_ACTION = 2_000
 TIME_WAIT = 5_000

@@ -1,5 +1,4 @@
 """API client for PeopleHub leave request endpoints."""
-from datetime import datetime
 from typing import Any
 
 from automation.api.base import Base
