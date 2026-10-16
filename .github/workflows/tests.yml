@@ -177,13 +177,17 @@ jobs:
   web-tests:
     name: Playwright Tests
     needs: [quality-gate]
-    outputs:
-      web_tests_exist: ${{ steps.web-tests.outputs.exists }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
+    outputs:
+      web_tests_exist: ${{ steps.web-tests.outputs.exists }}
+
     env:
       API_BASE_URL: http://127.0.0.1:8000
+      POSTGRES_DB: peoplehub
+      POSTGRES_USER: peoplehub
+      POSTGRES_PASSWORD: ci-postgres-password
       SECRET_KEY: ci-secret-key-for-github-actions
       PEOPLEHUB_ADMIN_EMAIL: admin@peoplehub.com
       PEOPLEHUB_ADMIN_PASSWORD: ci-admin-password
@@ -191,6 +195,7 @@ jobs:
       PEOPLEHUB_HR_PASSWORD: ci-hr-password
       PEOPLEHUB_EMPLOYEE_EMAIL: employee@peoplehub.com
       PEOPLEHUB_EMPLOYEE_PASSWORD: ci-employee-password
+      QASE_TESTOPS_API_TOKEN: ${{ secrets.QASE_TESTOPS_API_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -244,15 +249,44 @@ jobs:
         working-directory: app/frontend
         run: npm run build
 
+      - name: Start backend and database
+        if: steps.web-tests.outputs.exists == 'true'
+        run: docker compose up --build -d --wait --wait-timeout 120
+
+      - name: Seed test data
+        if: steps.web-tests.outputs.exists == 'true'
+        run: docker compose exec -T backend python -m app.seed
+
+      - name: Start frontend
+        if: steps.web-tests.outputs.exists == 'true'
+        working-directory: app/frontend
+        shell: bash
+        run: |
+          npm run dev -- --host 0.0.0.0 > /tmp/peoplehub-frontend.log 2>&1 &
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:5173/login > /dev/null; then
+              echo "Frontend is ready."
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/peoplehub-frontend.log
+          exit 1
+
       - name: Run Playwright tests
         if: steps.web-tests.outputs.exists == 'true'
         env:
           CI: "true"
-          QASE_TESTOPS_API_TOKEN: ${{ secrets.QASE_TESTOPS_API_TOKEN }}
         run: |
           python -m pytest automation/tests/web \
             --alluredir=allure-results \
             --junitxml=web-report.xml
+
+      - name: Show application logs on failure
+        if: failure() && steps.web-tests.outputs.exists == 'true'
+        run: |
+          docker compose logs --no-color
+          cat /tmp/peoplehub-frontend.log || true
 
       - name: Upload Web test artifacts
         if: always() && steps.web-tests.outputs.exists == 'true'
@@ -265,11 +299,15 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+      - name: Stop backend and database
+        if: always() && steps.web-tests.outputs.exists == 'true'
+        run: docker compose down -v --remove-orphans
+
   allure-report:
     name: Allure Report
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [ quality-gate, api-tests, web-tests ]
+    needs: [quality-gate, api-tests, web-tests]
     if: always() && needs.quality-gate.result == 'success' && github.event_name != 'pull_request'
 
     steps:
@@ -291,7 +329,6 @@ jobs:
           path: artifacts/api-test-results
 
       - name: Download Web test results
-        if: always()
         continue-on-error: true
         uses: actions/download-artifact@v5
         with:
