@@ -1,0 +1,27 @@
+curl \
+  -X \
+  PUT \
+  http://127.0.0.1:8000/api/employees/5 \
+  -H \
+  'User-Agent: python-requests/2.34.2' \
+  -H \
+  'Accept-Encoding: gzip, deflate' \
+  -H \
+  'Accept: */*' \
+  -H \
+  'Connection: keep-alive' \
+  -H \
+  'Authorization: Bearer ***' \
+  -H \
+  'Content-Type: application/json' \
+  --data-raw \
+  '{
+  "first_name": "first_name_random: jqhbhvykoq",
+  "last_name": "updated_last_name_by_AT ijalfvshis",
+  "email": "outsourcing1900@gmail.com",
+  "position": "Updated position_by_AT vihszcvzka",
+  "department_id": 9,
+  "phone": "+7(165)056-33-83",
+  "status": "on_leave",
+  "manager_id": null
+}'

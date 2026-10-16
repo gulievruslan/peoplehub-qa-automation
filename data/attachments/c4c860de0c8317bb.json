@@ -1,0 +1,11 @@
+{
+  "id": 6,
+  "employee_id": 10,
+  "month": 10,
+  "year": 2026,
+  "salary": 444.0,
+  "status": "pending",
+  "paid_at": null,
+  "created_at": "2026-10-16T18:40:59.024915",
+  "updated_at": "2026-10-16T18:40:59.024934"
+}
