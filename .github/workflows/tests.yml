@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: "0 17 * * 0"
 
 permissions:
   contents: write
@@ -15,7 +17,6 @@ jobs:
     name: Frontend Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -35,11 +36,84 @@ jobs:
         working-directory: app/frontend
         run: npm run build
 
-  quality-gate:
-    name: Quality Gate
+  application-quality-gate:
+    name: Application Quality Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      API_BASE_URL: http://127.0.0.1:8000
+      POSTGRES_DB: peoplehub
+      POSTGRES_USER: peoplehub
+      POSTGRES_PASSWORD: ci-postgres-password
+      SECRET_KEY: ci-secret-key-for-github-actions
+      PEOPLEHUB_ADMIN_EMAIL: admin@peoplehub.com
+      PEOPLEHUB_ADMIN_PASSWORD: ci-admin-password
+      PEOPLEHUB_HR_EMAIL: hr@peoplehub.com
+      PEOPLEHUB_HR_PASSWORD: ci-hr-password
+      PEOPLEHUB_EMPLOYEE_EMAIL: employee@peoplehub.com
+      PEOPLEHUB_EMPLOYEE_PASSWORD: ci-employee-password
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Start backend and database
+        run: docker compose up --build -d --wait --wait-timeout 120
+
+      - name: Check application and database health
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          check_endpoint() {
+            local endpoint="$1"
+            local attempts=30
+
+            echo "Checking ${endpoint}"
+
+            for ((attempt = 1; attempt <= attempts; attempt++)); do
+              if curl --fail --silent --show-error "${endpoint}"; then
+                echo
+                echo "${endpoint} is healthy."
+                return 0
+              fi
+
+              if ((attempt < attempts)); then
+                echo "Attempt ${attempt}/${attempts} failed. Retrying in 2 seconds..."
+                sleep 2
+              fi
+            done
+
+            echo "::error::Health check failed: ${endpoint}"
+            return 1
+          }
+
+          check_endpoint "${API_BASE_URL}/health"
+          check_endpoint "${API_BASE_URL}/health/db"
+
+      - name: Show Docker logs on failure
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Upload Application Quality Gate logs
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: application-quality-gate-logs
+          path: |
+            /tmp/peoplehub-health-check.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Stop backend and database
+        if: always()
+        run: docker compose down -v --remove-orphans
+
+  automation-quality-gate:
+    name: Automation Quality Gate
+    needs: [application-quality-gate]
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -56,29 +130,26 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r automation/requirements.txt
 
-      - name: Run quality checks
-        id: quality
+      - name: Run automation quality checks
         shell: bash
         run: |
           mkdir -p quality-reports
           failed=0
 
           echo "::group::Ruff"
-          ruff check automation --output-format=json \
-            --output-file=quality-reports/ruff.json
-          ruff_status=$?
-          if [ "$ruff_status" -ne 0 ]; then
+          if ruff check automation --output-format=json --output-file=quality-reports/ruff.json; then
+            echo "Ruff checks passed."
+          else
             failed=1
             echo "::error::Ruff checks failed."
-            ruff check automation
+            ruff check automation || true
           fi
           echo "::endgroup::"
 
           echo "::group::isort"
-          isort --check-only --diff automation \
-            > quality-reports/isort.txt 2>&1
-          isort_status=$?
-          if [ "$isort_status" -ne 0 ]; then
+          if isort --check-only --diff automation > quality-reports/isort.txt 2>&1; then
+            echo "isort checks passed."
+          else
             failed=1
             cat quality-reports/isort.txt
             echo "::error::isort checks failed."
@@ -86,9 +157,9 @@ jobs:
           echo "::endgroup::"
 
           echo "::group::mypy"
-          mypy automation > quality-reports/mypy.txt 2>&1
-          mypy_status=$?
-          if [ "$mypy_status" -ne 0 ]; then
+          if mypy automation > quality-reports/mypy.txt 2>&1; then
+            echo "mypy checks passed."
+          else
             failed=1
             cat quality-reports/mypy.txt
             echo "::error::mypy checks failed."
@@ -97,21 +168,20 @@ jobs:
 
           exit "$failed"
 
-      - name: Upload Quality Gate reports
+      - name: Upload Automation Quality Gate reports
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: quality-gate-reports
+          name: automation-quality-gate-reports
           path: quality-reports/
           if-no-files-found: warn
           retention-days: 14
 
   api-tests:
     name: API Tests
-    needs: [quality-gate]
+    needs: [application-quality-gate, automation-quality-gate]
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
     env:
       API_BASE_URL: http://127.0.0.1:8000
       POSTGRES_DB: peoplehub
@@ -150,8 +220,7 @@ jobs:
 
       - name: Run API tests
         run: |
-          python -m pytest automation/tests/api \
-            -n 4 \
+          python -m pytest automation/tests/api -n 4 \
             --alluredir=allure-results \
             --junitxml=report.xml
 
@@ -159,7 +228,7 @@ jobs:
         if: failure()
         run: docker compose logs --no-color
 
-      - name: Upload API test artifacts
+      - name: Upload API test results
         if: always()
         uses: actions/upload-artifact@v6
         with:
@@ -176,13 +245,11 @@ jobs:
 
   web-tests:
     name: Playwright Tests
-    needs: [quality-gate]
+    needs: [application-quality-gate, automation-quality-gate]
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
     outputs:
       web_tests_exist: ${{ steps.web-tests.outputs.exists }}
-
     env:
       API_BASE_URL: http://127.0.0.1:8000
       POSTGRES_DB: peoplehub
@@ -195,7 +262,6 @@ jobs:
       PEOPLEHUB_HR_PASSWORD: ci-hr-password
       PEOPLEHUB_EMPLOYEE_EMAIL: employee@peoplehub.com
       PEOPLEHUB_EMPLOYEE_PASSWORD: ci-employee-password
-      QASE_TESTOPS_API_TOKEN: ${{ secrets.QASE_TESTOPS_API_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -205,12 +271,12 @@ jobs:
         id: web-tests
         shell: bash
         run: |
-          if find automation/tests/web -type f -name 'test_*.py' \
-            -print -quit 2>/dev/null | grep -q .; then
+          if find automation/tests/web -maxdepth 1 -type f -name 'test_*.py' -print -quit | grep -q .; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Web tests were found."
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "No Web tests found; skipping Playwright tests."
+            echo "No Web tests found. Playwright execution will be skipped."
           fi
 
       - name: Set up Python
@@ -263,32 +329,35 @@ jobs:
         shell: bash
         run: |
           npm run dev -- --host 0.0.0.0 > /tmp/peoplehub-frontend.log 2>&1 &
-          for i in {1..30}; do
+          echo $! > /tmp/peoplehub-frontend.pid
+
+          for attempt in {1..30}; do
             if curl --fail --silent http://127.0.0.1:5173/login > /dev/null; then
               echo "Frontend is ready."
               exit 0
             fi
+
             sleep 2
           done
+
           cat /tmp/peoplehub-frontend.log
+          echo "::error::Frontend did not start in time."
           exit 1
 
       - name: Run Playwright tests
         if: steps.web-tests.outputs.exists == 'true'
-        env:
-          CI: "true"
         run: |
           python -m pytest automation/tests/web \
             --alluredir=allure-results \
             --junitxml=web-report.xml
 
-      - name: Show application logs on failure
+      - name: Show service logs on failure
         if: failure() && steps.web-tests.outputs.exists == 'true'
         run: |
           docker compose logs --no-color
           cat /tmp/peoplehub-frontend.log || true
 
-      - name: Upload Web test artifacts
+      - name: Upload Web test results
         if: always() && steps.web-tests.outputs.exists == 'true'
         uses: actions/upload-artifact@v6
         with:
@@ -307,14 +376,22 @@ jobs:
     name: Allure Report
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [quality-gate, api-tests, web-tests]
-    if: always() && needs.quality-gate.result == 'success' && github.event_name != 'pull_request'
+    needs:
+      - application-quality-gate
+      - automation-quality-gate
+      - api-tests
+      - web-tests
+    if: >-
+      always() &&
+      needs.application-quality-gate.result == 'success' &&
+      needs.automation-quality-gate.result == 'success' &&
+      github.event_name != 'pull_request'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Load previous Allure history
+      - name: Checkout gh-pages history
         uses: actions/checkout@v5
         continue-on-error: true
         with:
@@ -322,15 +399,15 @@ jobs:
           path: gh-pages
 
       - name: Download API test results
+        uses: actions/download-artifact@v6
         continue-on-error: true
-        uses: actions/download-artifact@v5
         with:
           name: api-test-results
           path: artifacts/api-test-results
 
       - name: Download Web test results
+        uses: actions/download-artifact@v6
         continue-on-error: true
-        uses: actions/download-artifact@v5
         with:
           name: web-test-results
           path: artifacts/web-test-results
@@ -338,17 +415,14 @@ jobs:
       - name: Combine Allure results
         shell: bash
         run: |
-          mkdir -p allure-results gh-pages
+          mkdir -p allure-results
 
-          find artifacts/api-test-results/allure-results \
-            -maxdepth 1 -type f -exec cp -n {} allure-results/ \; 2>/dev/null || true
+          find artifacts -type f -name '*-result.json' -exec cp {} allure-results/ \;
+          find artifacts -type f -name '*-container.json' -exec cp {} allure-results/ \;
+          find artifacts -type f -name '*-attachment*' -exec cp {} allure-results/ \;
 
-          find artifacts/web-test-results/allure-results \
-            -maxdepth 1 -type f -exec cp -n {} allure-results/ \; 2>/dev/null || true
-
-          if ! find allure-results -maxdepth 1 -type f -name '*-result.json' \
-            -print -quit | grep -q .; then
-            echo "No Allure test results were found."
+          if ! find allure-results -maxdepth 1 -type f -name '*-result.json' -print -quit | grep -q .; then
+            echo "::error::No Allure test result files were found."
             exit 1
           fi
 
@@ -363,11 +437,10 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Install Allure CLI
+      - name: Install Allure Commandline
         run: npm install -g allure-commandline
 
       - name: Restore Allure history
-        shell: bash
         run: |
           if [ -d gh-pages/history ]; then
             mkdir -p allure-results/history
@@ -384,11 +457,8 @@ jobs:
           publish_branch: gh-pages
           publish_dir: allure-history
 
-      - name: Add Allure Report link to summary
-        if: always() && github.event_name != 'pull_request'
+      - name: Add Allure report link to summary
         run: |
-          {
-            echo "## Allure Report"
-            echo ""
-            echo "[Open latest published Allure Report](https://gulievruslan.github.io/peoplehub-qa-automation/)"
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo "### Allure Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "[Open the latest Allure report](https://gulievruslan.github.io/peoplehub-qa-automation/)" \
+            >> "$GITHUB_STEP_SUMMARY"
