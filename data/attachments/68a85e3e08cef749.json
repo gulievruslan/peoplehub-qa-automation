@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "employee_id": 6,
+  "start_date": "2026-10-17T08:23:52.179078",
+  "end_date": "2026-10-18T08:23:52.179102",
+  "reason": "Reason created by AT",
+  "status": "pending",
+  "created_at": "2026-10-17T08:23:35.636450",
+  "updated_at": "2026-10-17T08:23:35.636472"
+}
