@@ -1,0 +1,7 @@
+User-Agent: python-requests/2.34.2
+Accept-Encoding: gzip, deflate
+Accept: */*
+Connection: keep-alive
+Authorization: Bearer ***
+Content-Length: 276
+Content-Type: application/json
