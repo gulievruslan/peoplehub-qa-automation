@@ -1,9 +1,8 @@
-
 """DTOs for PeopleHub payroll API."""
 
 from datetime import datetime
 
-from pydantic import Field, RootModel, StrictInt, StrictStr
+from pydantic import Field, RootModel, StrictInt, StrictStr, StrictFloat
 
 from automation.dto.schema.generic import PeopleHubDTO
 
@@ -25,8 +24,9 @@ class PayrollData(PeopleHubDTO):
 class PayrollListResponse(PeopleHubDTO):
     """Response DTO for the payroll list."""
 
-    total: StrictInt = Field(description="Total number of payroll records")
     items: list[PayrollData] = Field(description="Payroll records")
+    total_paid: StrictFloat = Field(description="Total number of payroll records matching the query.")
+    total: StrictInt = Field(description="Total number of payroll records")
 
 
 class PayrollSummaryData(PeopleHubDTO):
@@ -63,3 +63,12 @@ class PayrollUpdate(PeopleHubDTO):
     salary: float | None = Field(default=None, description="Salary amount")
     status: StrictStr | None = Field(default=None, description="Payroll status")
     paid_at: datetime | None = Field(default=None, description="Payment timestamp")
+
+
+class PayrollItemInfo(PeopleHubDTO):
+    """DTO containing the month, status, and salary of a payroll record."""
+
+    month: StrictStr = Field(description="Payroll month")
+    year: StrictInt = Field(description="Payroll year")
+    status: StrictStr = Field(description="Payroll status")
+    salary: float = Field(description="Salary amount")

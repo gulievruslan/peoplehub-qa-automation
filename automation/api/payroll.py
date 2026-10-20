@@ -5,6 +5,7 @@ from typing import Any
 from automation.api.base import Base
 from automation.custom.response.custom_response import CustomResponse
 from automation.dto.schema.auth_models import InvalidCredentialsResponse
+from automation.dto.schema.payroll_by_employee_model import PayrollByEmployee
 from automation.dto.schema.payroll_models import (
     PayrollData,
     PayrollListResponse,
@@ -66,9 +67,9 @@ class Payroll(Base):
             response_error_model=InvalidCredentialsResponse,
         )
 
-    def get_payroll_by_employee(self) -> CustomResponse:
+    def get_payroll_by_employee(self) -> CustomResponse[PayrollByEmployee, None]:
         """Get payroll data grouped or filtered by employee."""
-        return self.request(method="GET", url=f"{self.url}/by-employee")
+        return self.request(method="GET", url=f"{self.url}/by-employee", response_model=PayrollByEmployee)
 
     def get_payroll_history(self) -> CustomResponse[PayrollSummaryListResponse, InvalidCredentialsResponse]:
         """Get payroll summary history."""
