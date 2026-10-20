@@ -1,19 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getEmployees } from "../api/employees";
-import { getDepartments } from "../api/departments";
-import { getCurrentUser } from "../api/auth";
+import {useEffect, useMemo, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {getEmployees} from "../api/employees";
+import {getDepartments} from "../api/departments";
+import {useAuth} from "../context/AuthContext";
 
 function Employees() {
     const navigate = useNavigate();
+    const {user} = useAuth();
 
     const [employees, setEmployees] = useState([]);
     const [departments, setDepartments] = useState([]);
-    const [user, setUser] = useState(null);
     const [error, setError] = useState("");
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [loading, setLoading] = useState(true);
+
+    const canManageEmployees = ["admin", "hr_manager"].includes(user?.role);
 
     useEffect(() => {
         let active = true;
@@ -23,17 +25,11 @@ function Employees() {
             setError("");
 
             try {
-                const [employeesData, userData] = await Promise.all([
-                    getEmployees(),
-                    getCurrentUser(),
-                ]);
+                const employeesData = await getEmployees();
 
                 if (!active) return;
 
                 setEmployees(Array.isArray(employeesData) ? employeesData : []);
-                setUser(userData);
-
-                const canManageEmployees = ["admin", "hr_manager"].includes(userData.role);
 
                 if (canManageEmployees) {
                     try {
@@ -47,6 +43,8 @@ function Employees() {
                             setDepartments([]);
                         }
                     }
+                } else {
+                    setDepartments([]);
                 }
             } catch (loadError) {
                 if (active) {
@@ -59,14 +57,14 @@ function Employees() {
             }
         }
 
-        loadData();
+        if (user) {
+            void loadData();
+        }
 
         return () => {
             active = false;
         };
-    }, []);
-
-    const canManageEmployees = ["admin", "hr_manager"].includes(user?.role);
+    }, [user, canManageEmployees]);
 
     const departmentById = useMemo(
         () => new Map(departments.map((department) => [department.id, department])),
@@ -169,8 +167,8 @@ function Employees() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                     >
-                        <circle cx="11" cy="11" r="7" />
-                        <path d="m20 20-4-4" />
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="m20 20-4-4"/>
                     </svg>
 
                     <input
@@ -205,45 +203,45 @@ function Employees() {
             <div className="employees-table-container">
                 <table className="employees-table">
                     <thead>
-                        <tr>
-                            <th>Employee</th>
-                            <th>Position</th>
-                            <th>Department</th>
-                            <th>Status</th>
-                        </tr>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Position</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                    </tr>
                     </thead>
 
                     <tbody>
-                        {filteredEmployees.map((employee) => (
-                            <tr key={employee.id}>
-                                <td>
-                                    <button
-                                        type="button"
-                                        className="employee-table-person"
-                                        onClick={() => navigate(`/employees/${employee.id}`)}
-                                    >
+                    {filteredEmployees.map((employee) => (
+                        <tr key={employee.id}>
+                            <td>
+                                <button
+                                    type="button"
+                                    className="employee-table-person"
+                                    onClick={() => navigate(`/employees/${employee.id}`)}
+                                >
                                         <span className="employee-table-avatar">
                                             {getInitials(employee)}
                                         </span>
 
-                                        <span className="employee-table-person-info">
+                                    <span className="employee-table-person-info">
                                             <strong>
                                                 {employee.first_name} {employee.last_name}
                                             </strong>
                                             <span>{employee.email}</span>
                                         </span>
-                                    </button>
-                                </td>
+                                </button>
+                            </td>
 
-                                <td>{employee.position || "—"}</td>
-                                <td>{getDepartmentName(employee.department_id)}</td>
-                                <td>
+                            <td>{employee.position || "—"}</td>
+                            <td>{getDepartmentName(employee.department_id)}</td>
+                            <td>
                                     <span className={`status-badge status-${employee.status}`}>
                                         {(employee.status || "unknown").replace("_", " ")}
                                     </span>
-                                </td>
-                            </tr>
-                        ))}
+                            </td>
+                        </tr>
+                    ))}
                     </tbody>
                 </table>
 

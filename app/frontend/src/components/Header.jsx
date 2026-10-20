@@ -1,35 +1,22 @@
-import {useEffect, useRef, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {getCurrentUser} from "../api/auth";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     getNotifications,
     getUnreadNotificationsCount,
     markAllNotificationsAsRead,
     markNotificationAsRead,
 } from "../api/notifications";
+import { useAuth } from "../context/AuthContext";
 
 function Header() {
-    const [user, setUser] = useState(null);
+    const { user, logout } = useAuth();
+
     const [notifications, setNotifications] = useState([]);
-    const [notificationsOpen, setNotificationsOpen] =
-        useState(false);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const notificationRef = useRef(null);
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        async function loadUser() {
-            try {
-                const data = await getCurrentUser();
-                setUser(data);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-
-        loadUser();
-    }, []);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -41,16 +28,10 @@ function Header() {
             }
         }
 
-        document.addEventListener(
-            "mousedown",
-            handleClickOutside
-        );
+        document.addEventListener("mousedown", handleClickOutside);
 
         return () => {
-            document.removeEventListener(
-                "mousedown",
-                handleClickOutside
-            );
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
 
@@ -61,10 +42,7 @@ function Header() {
 
         async function loadNotifications() {
             try {
-                const [
-                    notificationsData,
-                    unreadData,
-                ] = await Promise.all([
+                const [notificationsData, unreadData] = await Promise.all([
                     getNotifications(),
                     getUnreadNotificationsCount(),
                 ]);
@@ -76,15 +54,15 @@ function Header() {
             }
         }
 
-        loadNotifications();
+        void loadNotifications();
     }, [user]);
 
     function handleLogout() {
-        localStorage.removeItem("access_token");
+        logout();
         navigate("/login");
     }
 
-    async function handleNotificationsClick() {
+    function handleNotificationsClick() {
         setNotificationsOpen((current) => !current);
     }
 
@@ -96,16 +74,14 @@ function Header() {
                 current.map((notification) =>
                     notification.id === notificationId
                         ? {
-                            ...notification,
-                            is_read: true,
-                        }
-                        : notification
-                )
+                              ...notification,
+                              is_read: true,
+                          }
+                        : notification,
+                ),
             );
 
-            setUnreadCount((current) =>
-                Math.max(current - 1, 0)
-            );
+            setUnreadCount((current) => Math.max(current - 1, 0));
         } catch (error) {
             console.error(error);
         }
@@ -119,7 +95,7 @@ function Header() {
                 current.map((notification) => ({
                     ...notification,
                     is_read: true,
-                }))
+                })),
             );
 
             setUnreadCount(0);
@@ -133,16 +109,11 @@ function Header() {
             <div className="header-user">
                 {user && (
                     <>
-                        <div
-                            className="notification-wrapper"
-                            ref={notificationRef}
-                        >
+                        <div className="notification-wrapper" ref={notificationRef}>
                             <button
                                 className="notification-button"
                                 type="button"
-                                onClick={
-                                    handleNotificationsClick
-                                }
+                                onClick={handleNotificationsClick}
                             >
                                 <svg
                                     width="19"
@@ -154,8 +125,8 @@ function Header() {
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 >
-                                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
-                                    <path d="M10 21h4"/>
+                                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                                    <path d="M10 21h4" />
                                 </svg>
 
                                 {unreadCount > 0 && (
@@ -168,74 +139,48 @@ function Header() {
                             {notificationsOpen && (
                                 <div className="notifications-dropdown">
                                     <div className="notifications-header">
-                                        <strong>
-                                            Notifications
-                                        </strong>
-
-                                        <span>
-                                            {unreadCount} new
-                                        </span>
+                                        <strong>Notifications</strong>
+                                        <span>{unreadCount} new</span>
                                     </div>
 
-                                    {notifications.length ===
-                                    0 ? (
+                                    {notifications.length === 0 ? (
                                         <div className="notification-empty">
                                             No notifications
                                         </div>
                                     ) : (
-                                        notifications.map(
-                                            (notification) => (
-                                                <button
-                                                    key={
-                                                        notification.id
-                                                    }
-                                                    className={`notification-item ${
-                                                        notification.is_read
-                                                            ? "read"
-                                                            : ""
-                                                    }`}
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleNotificationClick(
-                                                            notification.id
-                                                        )
-                                                    }
-                                                >
-                                                    {!notification.is_read && (
-                                                        <span className="notification-dot"/>
-                                                    )}
+                                        notifications.map((notification) => (
+                                            <button
+                                                key={notification.id}
+                                                className={`notification-item ${
+                                                    notification.is_read ? "read" : ""
+                                                }`}
+                                                type="button"
+                                                onClick={() =>
+                                                    handleNotificationClick(notification.id)
+                                                }
+                                            >
+                                                {!notification.is_read && (
+                                                    <span className="notification-dot" />
+                                                )}
 
-                                                    <div>
-                                                        <strong>
-                                                            {
-                                                                notification.title
-                                                            }
-                                                        </strong>
-
-                                                        <p>
-                                                            {
-                                                                notification.message
-                                                            }
-                                                        </p>
-
-                                                        <span>
-                                                            {new Date(
-                                                                notification.created_at
-                                                            ).toLocaleString()}
-                                                        </span>
-                                                    </div>
-                                                </button>
-                                            )
-                                        )
+                                                <div>
+                                                    <strong>{notification.title}</strong>
+                                                    <p>{notification.message}</p>
+                                                    <span>
+                                                        {new Date(
+                                                            notification.created_at,
+                                                        ).toLocaleString()}
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        ))
                                     )}
 
                                     {unreadCount > 0 && (
                                         <button
                                             className="notifications-footer"
                                             type="button"
-                                            onClick={
-                                                handleMarkAllAsRead
-                                            }
+                                            onClick={handleMarkAllAsRead}
                                         >
                                             Mark all as read
                                         </button>
@@ -251,6 +196,7 @@ function Header() {
 
                         <button
                             className="logout-button"
+                            type="button"
                             onClick={handleLogout}
                         >
                             Logout
