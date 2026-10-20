@@ -7,7 +7,7 @@ from automation.custom.generators.custom_date_time import CustomDateTime
 from automation.custom.generators.randoms import get_random_number, get_random_string
 from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubWeb
-from automation.tests.constants import D_M_Y_DATE, LEAVE_REQUEST_REASON_RANDOM
+from automation.tests.constants import LEAVE_REQUEST_REASON_RANDOM, M_D_Y_DATE
 from automation.tests.custom_types import EmployeeParams, LeaveRequestParams, LeaveRequestStatusCounts
 from automation.tests.web.enums import LeaveRequestActionButtonNames
 from automation.web_pw.pages.people_hub.people_hub_web.modals.edit_leave_request import EditLeaveRequestModal
@@ -86,8 +86,8 @@ class TestLeaveRequestsUI(PeopleHubWeb):
             name_surname=f'{create_employee_and_delete['first_name']} {create_employee_and_delete['last_name']}'
         )
         pw_open_page.fill_start_end_dates(
-            start_date=CustomDateTime(fmt=D_M_Y_DATE).get_offset_string(to_the_future=False),
-            end_date=CustomDateTime(fmt=D_M_Y_DATE).get_offset_string(days=get_random_number(end=14))
+            start_date=CustomDateTime(fmt=M_D_Y_DATE).get_offset_string(to_the_future=False),
+            end_date=CustomDateTime(fmt=M_D_Y_DATE).get_offset_string(days=get_random_number(end=14))
         )
         pw_open_page.fill_in_leave_request_reason(reason=LEAVE_REQUEST_REASON_RANDOM)
         pw_open_page.click_button_submit_request()
