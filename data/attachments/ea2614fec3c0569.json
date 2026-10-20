@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "employee_id": 6,
+  "start_date": "2026-10-20T16:22:58.266690",
+  "end_date": "2026-11-11T16:22:58.266720",
+  "reason": "leave_request_random_ioirertybx",
+  "status": "pending",
+  "created_at": "2026-10-20T16:22:30.396736",
+  "updated_at": "2026-10-20T16:22:30.396765"
+}

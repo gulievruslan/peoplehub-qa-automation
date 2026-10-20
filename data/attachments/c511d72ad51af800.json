@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "first_name": "CI",
+    "last_name": "Employee",
+    "email": "employee.profile@example.com",
+    "phone": null,
+    "position": "QA Engineer",
+    "status": "active",
+    "department_id": 1,
+    "department_name": "CI Department",
+    "manager_id": null,
+    "created_at": "2026-10-20T16:22:35.692360",
+    "updated_at": "2026-10-20T16:22:35.692432"
+  },
+  {
+    "id": 3,
+    "first_name": "first_name_random_ftdqadicza",
+    "last_name": "last_name_random_gkswjkuqie",
+    "email": "professional1907@mail.ru",
+    "phone": "+7(495)982-37-15",
+    "position": "random_position_wndkgyaruz",
+    "status": "active",
+    "department_id": 8,
+    "department_name": "Department created by AT_kuxcyggfaa",
+    "manager_id": null,
+    "created_at": "2026-10-20T16:22:30.394328",
+    "updated_at": "2026-10-20T16:22:30.394382"
+  }
+]
