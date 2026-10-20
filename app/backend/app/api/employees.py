@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.auth_dependencies import get_current_user, require_roles
 from app.dependencies import get_db
@@ -73,6 +73,7 @@ def get_employees(
 ) -> list[Employee]:
     return (
         db.query(Employee)
+        .options(selectinload(Employee.department))
         .order_by(Employee.last_name, Employee.first_name)
         .all()
     )

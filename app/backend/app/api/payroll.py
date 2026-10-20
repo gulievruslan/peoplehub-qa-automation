@@ -1,4 +1,3 @@
-
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -21,10 +20,12 @@ router = APIRouter(
     tags=["Payroll"],
 )
 
-HR_ROLES = {UserRole.ADMIN, UserRole.HR_MANAGER}
+HR_ROLES = {UserRole.HR_MANAGER}
+PAYROLL_READ_ROLES = {UserRole.HR_MANAGER, UserRole.ADMIN}
 
 
 def require_hr_access(current_user: User) -> None:
+    """Allow access to payroll modifications for HR managers only."""
     if current_user.role not in HR_ROLES:
         raise HTTPException(
             status_code=403,
@@ -32,7 +33,17 @@ def require_hr_access(current_user: User) -> None:
         )
 
 
+def require_payroll_read_access(current_user: User) -> None:
+    """Allow payroll data access for HR managers and admins."""
+    if current_user.role not in PAYROLL_READ_ROLES:
+        raise HTTPException(
+            status_code=403,
+            detail="Not enough permissions",
+        )
+
+
 def require_employee_link(current_user: User) -> int:
+    """Return the employee ID linked to the current user."""
     if current_user.employee_id is None:
         raise HTTPException(
             status_code=403,
@@ -53,15 +64,22 @@ def get_payrolls(
         employee_id = require_employee_link(current_user)
         query = query.filter(Payroll.employee_id == employee_id)
     else:
-        require_hr_access(current_user)
+        require_payroll_read_access(current_user)
 
     payrolls = query.order_by(
         Payroll.year.desc(),
         Payroll.month.desc(),
     ).all()
 
+    total_paid = sum(
+        payroll.salary
+        for payroll in payrolls
+        if payroll.status == "paid"
+    )
+
     return PayrollListResponse(
         total=len(payrolls),
+        total_paid=float(total_paid),
         items=[
             PayrollResponse.model_validate(payroll)
             for payroll in payrolls
@@ -74,7 +92,7 @@ def get_payroll_by_employee(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    require_hr_access(current_user)
+    require_payroll_read_access(current_user)
 
     latest_payroll = (
         db.query(Payroll)
@@ -125,7 +143,7 @@ def get_payroll_history(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> list[PayrollSummaryResponse]:
-    require_hr_access(current_user)
+    require_payroll_read_access(current_user)
 
     payrolls = (
         db.query(
@@ -175,7 +193,7 @@ def get_payroll_summary(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> PayrollSummaryResponse:
-    require_hr_access(current_user)
+    require_payroll_read_access(current_user)
 
     latest_payroll = (
         db.query(Payroll)
@@ -261,7 +279,7 @@ def get_payroll(
                 detail="Payroll record not found",
             )
     else:
-        require_hr_access(current_user)
+        require_payroll_read_access(current_user)
 
     return payroll
 
