@@ -1,6 +1,6 @@
 """Module contains fixtures for api tests"""
 import pytest
-from _pytest.fixtures import SubRequest, fixture
+from _pytest.fixtures import SubRequest
 
 from automation.api.auth import AuthClient
 from automation.config.users import TestUser

@@ -6,7 +6,9 @@ from automation.custom.allure_custom.custom_allure import step
 from automation.tests.web.enums import DepartmentsButtonNames
 from automation.web_pw.pages.people_hub.constants import TIME_WAIT
 from automation.web_pw.pages.people_hub.pages.base_page import BasePeopleHubPage
-from automation.web_pw.pages.people_hub.people_hub_web.locators.departments.deparments_locators import DepartmentsPageLocatorsPW
+from automation.web_pw.pages.people_hub.people_hub_web.locators.departments.deparments_locators import (
+    DepartmentsPageLocatorsPW,
+)
 
 
 class DepartmentsPage(BasePeopleHubPage, DepartmentsPageLocatorsPW):

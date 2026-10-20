@@ -3,7 +3,7 @@ from playwright.sync_api import Page
 
 from automation.custom.allure_custom.custom_allure import step
 from automation.dto.schema.payroll_models import PayrollItemInfo
-from automation.tests.web.enums import DashboardPageTitles, DashboardPageCards
+from automation.tests.web.enums import DashboardPageCards, DashboardPageTitles
 from automation.web_pw.pages.people_hub.pages.base_page import BasePeopleHubPage
 from automation.web_pw.pages.people_hub.people_hub_web.locators.dashboard_locators import DashboardPageLocatorsPW
 

@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import Field, RootModel, StrictInt, StrictStr, StrictFloat
+from pydantic import Field, RootModel, StrictFloat, StrictInt, StrictStr
 
 from automation.dto.schema.generic import PeopleHubDTO
 

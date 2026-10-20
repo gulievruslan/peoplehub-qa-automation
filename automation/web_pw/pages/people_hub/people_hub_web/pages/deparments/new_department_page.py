@@ -3,8 +3,9 @@ from playwright.sync_api import Page
 
 from automation.custom.allure_custom.custom_allure import step
 from automation.web_pw.pages.people_hub.pages.base_page import BasePeopleHubPage
-from automation.web_pw.pages.people_hub.people_hub_web.locators.departments.new_department_locators import \
-    NewDepartmentsPageLocatorsPW
+from automation.web_pw.pages.people_hub.people_hub_web.locators.departments.new_department_locators import (
+    NewDepartmentsPageLocatorsPW,
+)
 
 
 class NewDepartmentPage(BasePeopleHubPage, NewDepartmentsPageLocatorsPW):

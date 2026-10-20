@@ -8,8 +8,8 @@ from automation.custom.generators.randoms import get_random_email, get_random_ph
 from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.dto.schema.employees_models import EmployeeStatus
 from automation.tests.allure_constants import PeopleHubApi
-from automation.tests.custom_types import EmployeeParams, DepartmentParams
 from automation.tests.constants import FIRST_NAME_RANDOM
+from automation.tests.custom_types import DepartmentParams, EmployeeParams
 
 
 @story("Employees")

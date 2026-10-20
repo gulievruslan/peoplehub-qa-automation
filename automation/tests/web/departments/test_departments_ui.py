@@ -5,8 +5,8 @@ from automation.config.users import ADMIN
 from automation.custom.custom_typing import Fixture
 from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubWeb
-from automation.tests.custom_types import DepartmentParams
 from automation.tests.constants import TESTING_DEPARTMENT
+from automation.tests.custom_types import DepartmentParams
 from automation.tests.web.enums import DepartmentsButtonNames
 from automation.web_pw.pages.people_hub.people_hub_web.pages.deparments.departments_page import DepartmentsPage
 from automation.web_pw.pages.people_hub.people_hub_web.pages.deparments.new_department_page import NewDepartmentPage
@@ -68,7 +68,7 @@ class TestDepartmentsUI(PeopleHubWeb):
         [({"need_teardown": False}, (ADMIN, DepartmentsPage))],
         indirect=True
     )
-    def test_update_department_name(
+    def test_delete_department_as_admin(
         self,
         create_random_department_name: Fixture[str],
         create_department_and_delete: Fixture[DepartmentParams],

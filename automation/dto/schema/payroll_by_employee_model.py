@@ -1,5 +1,5 @@
 """DTOs for PeopleHub payroll by employee API."""
-from pydantic import Field, StrictInt, StrictStr, StrictFloat, RootModel
+from pydantic import Field, RootModel, StrictFloat, StrictInt, StrictStr
 
 from automation.dto.schema.generic import PeopleHubDTO
 

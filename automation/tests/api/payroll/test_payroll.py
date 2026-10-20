@@ -8,8 +8,8 @@ from automation.custom.generators.custom_date_time import CustomDateTime
 from automation.custom.generators.randoms import get_random_number
 from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubApi
-from automation.tests.custom_types import EmployeeParams
 from automation.tests.api.enums import PayrollStatuses
+from automation.tests.custom_types import EmployeeParams
 
 
 @story('Payroll')

@@ -8,6 +8,7 @@ from automation.tests.allure_constants import PeopleHubWeb
 from automation.tests.web.enums import SidebarMenuButtonNames
 from automation.web_pw.pages.people_hub.people_hub_web.components.sidebar import SidebarComponent
 
+
 @story('Sidebar')
 @mark.sidebar_ui
 class TestSidebarUI(PeopleHubWeb):

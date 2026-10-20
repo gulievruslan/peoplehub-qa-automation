@@ -4,22 +4,22 @@ from automation.api.departments import Departments
 from automation.api.employees import Employees
 from automation.api.leave_requests import LeaveRequests
 from automation.api.payroll import Payroll
-from automation.config.users import ADMIN, TestUser, HR, EMPLOYEE
+from automation.config.users import ADMIN, EMPLOYEE, HR, TestUser
 from automation.custom.allure_custom.custom_allure import step
-from automation.custom.generators.custom_date_time import CustomDateTime, MONTHS
+from automation.custom.generators.custom_date_time import MONTHS, CustomDateTime
 from automation.custom.generators.randoms import (
     get_random_email,
     get_random_number,
     get_random_phone,
     get_random_string,
 )
+from automation.dto.schema.auth_models import UserResponse
 from automation.dto.schema.departments_models import DepartmentListResponse
-from automation.dto.schema.employees_models import EmployeeStatus, EmployeeData
+from automation.dto.schema.employees_models import EmployeeData, EmployeeStatus
 from automation.dto.schema.leave_requests_models import LeaveRequestData
 from automation.dto.schema.payroll_by_employee_model import PayrollByEmployeeData
-from automation.dto.schema.payroll_models import PayrollSummaryData, PayrollListResponse, PayrollItemInfo
+from automation.dto.schema.payroll_models import PayrollItemInfo, PayrollListResponse, PayrollSummaryData
 from automation.tests.custom_types import DepartmentParams
-from automation.dto.schema.auth_models import UserResponse
 
 
 @step('Create a new department')

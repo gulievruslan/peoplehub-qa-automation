@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, Any, Literal
 
 from playwright.sync_api import Locator, TimeoutError
 
-from automation.custom.logger.project_logger import logger
 from automation.custom.allure_custom.custom_allure import step
 from automation.custom.asserts.soft_assert import soft_assert
 from automation.web_playwright_custom.pages.base_pw import PlaywrightLocator, get_description

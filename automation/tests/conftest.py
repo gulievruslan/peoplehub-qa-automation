@@ -6,15 +6,14 @@ from _pytest.fixtures import SubRequest
 from pytest import fixture
 
 from automation.api.leave_requests import LeaveRequests
-from automation.config.users import ADMIN, TestUser
+from automation.config.users import ADMIN
 from automation.custom.custom_typing import Fixture, FixtureYield
 from automation.custom.generators.randoms import get_random_string
 from automation.custom.logger.log_fixture import log_fixture
 from automation.custom.typed_decorators import typed_title
 from automation.dto.schema.auth_models import UserResponse
 from automation.dto.schema.leave_requests_models import LeaveRequestStatus
-from automation.dto.schema.payroll_by_employee_model import PayrollByEmployeeData
-from automation.dto.schema.payroll_models import PayrollSummaryData, PayrollListResponse
+from automation.dto.schema.payroll_models import PayrollListResponse
 from automation.tests.constants import DEPARTMENT_NAME, FIRST_NAME_RANDOM, LEAVE_REQUEST_RANDOM
 from automation.tests.custom_types import DepartmentParams, EmployeeParams, LeaveRequestParams, LeaveRequestStatusCounts
 from automation.tests.helper_functions import (
@@ -32,7 +31,8 @@ from automation.tests.helper_functions import (
     get_employees_ids_by_name,
     get_info_about_me,
     get_leave_requests_ids_by_reason,
-    get_payroll_data_by_id, get_payroll_data,
+    get_payroll_data,
+    get_payroll_data_by_id,
 )
 
 QASE_PROJECT_CODE = "PEOPLEHUB"
