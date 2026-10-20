@@ -1,0 +1,27 @@
+curl \
+  -X \
+  PUT \
+  http://127.0.0.1:8000/api/employees/6 \
+  -H \
+  'User-Agent: python-requests/2.34.2' \
+  -H \
+  'Accept-Encoding: gzip, deflate' \
+  -H \
+  'Accept: */*' \
+  -H \
+  'Connection: keep-alive' \
+  -H \
+  'Authorization: Bearer ***' \
+  -H \
+  'Content-Type: application/json' \
+  --data-raw \
+  '{
+  "first_name": "first_name_random_metjbvhypi",
+  "last_name": "updated_last_name_by_AT omwpndgbar",
+  "email": "hansen2038@gmail.com",
+  "position": "Updated position_by_AT zfuyolbuvl",
+  "department_id": 10,
+  "phone": "+7(357)274-32-25",
+  "status": "on_leave",
+  "manager_id": null
+}'
