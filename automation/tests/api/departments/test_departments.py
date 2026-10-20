@@ -6,6 +6,7 @@ from automation.config.users import ADMIN
 from automation.custom.custom_typing import Fixture
 from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubApi
+from automation.tests.custom_types import DepartmentParams
 
 
 @story('Departments')
@@ -30,9 +31,9 @@ class TestDepartments(PeopleHubApi):
 
     @typed_qase_id(qase_id=59)
     @typed_title(value="Get department by ID")
-    def test_get_department_by_id(self, create_department_and_delete: Fixture[int]):
+    def test_get_department_by_id(self, create_department_and_delete: Fixture[DepartmentParams]):
         response = Departments(user=ADMIN).get_department_by_id(
-            department_id=create_department_and_delete
+            department_id=create_department_and_delete['department_id']
         )
 
         response.assert_status_code()
@@ -41,9 +42,9 @@ class TestDepartments(PeopleHubApi):
     @typed_qase_id(qase_id=148)
     @typed_title(value="Delete department")
     @mark.parametrize("create_department_and_delete", [{"need_teardown": False}], indirect=True)
-    def test_delete_department(self, create_department_and_delete: Fixture[int]):
+    def test_delete_department(self, create_department_and_delete: Fixture[DepartmentParams]):
         response = Departments(user=ADMIN).delete_department(
-            department_id=create_department_and_delete
+            department_id=create_department_and_delete['department_id']
         )
 
         response.assert_status_code(expected_code=204)
@@ -51,10 +52,10 @@ class TestDepartments(PeopleHubApi):
     @typed_qase_id(qase_id=150)
     @typed_title(value='Update department')
     def test_update_department(
-        self, create_random_department_name: Fixture[str], create_department_and_delete: Fixture[int]
+        self, create_random_department_name: Fixture[str], create_department_and_delete: Fixture[DepartmentParams]
     ):
         response = Departments(user=ADMIN).update_department(
-            department_id=create_department_and_delete, department_name=create_random_department_name
+            department_id=create_department_and_delete['department_id'], department_name=create_random_department_name
         )
 
         response.assert_status_code()

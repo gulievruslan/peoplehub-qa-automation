@@ -2,13 +2,13 @@ from allure import story
 from pytest import mark
 
 from automation.api.payroll import Payroll
-from automation.config.users import ADMIN, EMPLOYEE
+from automation.config.users import EMPLOYEE, HR
 from automation.custom.custom_typing import Fixture
 from automation.custom.generators.custom_date_time import CustomDateTime
 from automation.custom.generators.randoms import get_random_number
 from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubApi
-from automation.tests.api.custom_types import EmployeeData
+from automation.tests.custom_types import EmployeeParams
 from automation.tests.api.enums import PayrollStatuses
 
 
@@ -27,9 +27,9 @@ class TestPayroll(PeopleHubApi):
     @typed_qase_id(qase_id=69)
     @typed_title(value="Create payroll record")
     def test_create_payroll(
-        self, create_employee_and_delete: Fixture[EmployeeData], delete_payroll_after_test: Fixture[None]
+        self, create_employee_and_delete: Fixture[EmployeeParams], delete_payroll_after_test: Fixture[None]
     ):
-        response = Payroll(user=ADMIN).post_payroll(
+        response = Payroll(user=HR).post_payroll(
             employee_id=create_employee_and_delete['employee_id'],
             month=CustomDateTime().month,
             year=CustomDateTime().year,

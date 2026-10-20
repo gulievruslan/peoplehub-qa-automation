@@ -1,5 +1,4 @@
 """DTOs for PeopleHub employee API."""
-
 from enum import StrEnum
 
 from pydantic import Field, RootModel, StrictInt, StrictStr
@@ -26,6 +25,7 @@ class EmployeeData(PeopleHubDTO):
     position: StrictStr = Field(description="Position")
     status: EmployeeStatus = Field(description="Employee status")
     department_id: StrictInt = Field(description="Department ID")
+    department_name: StrictStr = Field(description="Department name")
     manager_id: StrictInt | None = Field(default=None, description="Manager ID")
     created_at: StrictStr = Field(description="Creation timestamp")
     updated_at: StrictStr = Field(description="Last update timestamp")

@@ -1,4 +1,3 @@
-
 """Module containing a custom response wrapper."""
 
 from collections.abc import Mapping, Sequence

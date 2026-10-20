@@ -1,10 +1,8 @@
-"""Module contains custom types"""
+"""Module contains custom types."""
 from collections.abc import Generator
-from typing import Annotated, TypeVar
+from typing import Annotated
 
 import pytest
 
-T = TypeVar('T')
-
-Fixture = Annotated[T, pytest.fixture]
-FixtureYield = Generator[T, None, None]
+type Fixture[T] = Annotated[T, pytest.fixture]
+type FixtureYield[T] = Generator[T, None, None]

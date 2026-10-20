@@ -11,3 +11,4 @@ class Config:
     temp_dir: Path = test_data_dir / "temp"
     csv_dir: Path = temp_dir / "csv"
     timeout: int = 30
+    base_url: str = "http://localhost:5173"

@@ -11,6 +11,7 @@ from automation.dto.schema.auth_models import UserResponse
 from automation.dto.schema.leave_requests_models import LeaveRequestStatus
 from automation.tests.allure_constants import PeopleHubApi
 from automation.tests.api.enums import LeaveRequestStatuses
+from automation.tests.custom_types import LeaveRequestParams
 
 
 @story("Leave Requests")
@@ -53,9 +54,9 @@ class TestLeaveRequests(PeopleHubApi):
     @typed_qase_id(qase_id=65)
     @typed_title(value="Get leave request by ID")
     @mark.parametrize("create_leave_request_and_delete", [{"reason": "Reason created by AT"}], indirect=True)
-    def test_get_leave_request_by_id(self, create_leave_request_and_delete: Fixture[int]):
+    def test_get_leave_request_by_id(self, create_leave_request_and_delete: Fixture[LeaveRequestParams]):
         response = LeaveRequests(user=ADMIN).get_leave_request_by_id(
-            leave_request_id=create_leave_request_and_delete
+            leave_request_id=create_leave_request_and_delete['leave_request_id']
         )
 
         response.assert_status_code()
@@ -64,9 +65,9 @@ class TestLeaveRequests(PeopleHubApi):
     @typed_qase_id(qase_id=151)
     @typed_title(value="Update leave request")
     @mark.parametrize("create_leave_request_and_delete", [{"reason": "Reason created by AT"}], indirect=True)
-    def test_update_leave_request(self, create_leave_request_and_delete: Fixture[int]):
+    def test_update_leave_request(self, create_leave_request_and_delete: Fixture[LeaveRequestParams]):
         response = LeaveRequests(user=ADMIN).update_leave_request(
-            leave_request_id=create_leave_request_and_delete,
+            leave_request_id=create_leave_request_and_delete['leave_request_id'],
             start_date=CustomDateTime().get_offset_string(),
             end_date=CustomDateTime().get_offset_string(days=get_random_number(end=30)),
             reason=f"Updated reason_by_AT {get_random_string()}",
@@ -79,7 +80,9 @@ class TestLeaveRequests(PeopleHubApi):
     @typed_qase_id(qase_id=152)
     @typed_title(value="Delete leave request")
     @mark.parametrize("create_leave_request_and_delete", [{"need_teardown": False}], indirect=True)
-    def test_delete_leave_request(self, create_leave_request_and_delete: Fixture[int]):
-        response = LeaveRequests(user=ADMIN).delete_leave_request(leave_request_id=create_leave_request_and_delete)
+    def test_delete_leave_request(self, create_leave_request_and_delete: Fixture[LeaveRequestParams]):
+        response = LeaveRequests(user=ADMIN).delete_leave_request(
+            leave_request_id=create_leave_request_and_delete['leave_request_id']
+        )
 
         response.assert_status_code(expected_code=204)
