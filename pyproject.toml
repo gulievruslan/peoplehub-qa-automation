@@ -23,6 +23,7 @@ select = [
     "I",
     "UP",
     "B",
+    "W391",
 ]
 
 ignore = [
