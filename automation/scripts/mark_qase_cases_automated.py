@@ -94,21 +94,31 @@ def request_qase(
         Parsed JSON response from the Qase API.
 
     Raises:
-        HTTPError: If the Qase API returns an unsuccessful HTTP response.
-        URLError: If the request cannot reach the Qase API.
-        RuntimeError: If the Qase API reports an unsuccessful operation.
+        RuntimeError: If the Qase API returns an unsuccessful response.
     """
     data = json.dumps(payload).encode("utf-8") if payload is not None else None
 
     request = Request(
-        url=url,
+        url,
         data=data,
-        headers={"Accept": "application/json", "Content-Type": "application/json", "Token": token},
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Token": token,
+        },
         method=method,
     )
 
-    with urlopen(request, timeout=30) as response:
-        result = cast(QaseApiResponse, json.loads(response.read().decode("utf-8")))
+    try:
+        with urlopen(request, timeout=30) as response:
+            result = cast(QaseApiResponse, json.loads(response.read().decode("utf-8")))
+    except HTTPError as error:
+        details = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(
+            f"Qase API {method} request failed: HTTP {error.code}: {details}"
+        ) from error
+    except URLError as error:
+        raise RuntimeError(f"Could not reach the Qase API: {error}") from error
 
     if result.get("status") is False:
         raise RuntimeError(f"Qase API rejected {method} {url}: {result}")
