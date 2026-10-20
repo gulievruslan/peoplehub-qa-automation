@@ -1,0 +1,47 @@
+[
+  {
+    "month": 5,
+    "year": 2026,
+    "total_payroll": 4200.0,
+    "employees_paid": 1,
+    "total_employees": 1,
+    "average_salary": 4200.0,
+    "completion_percentage": 100.0
+  },
+  {
+    "month": 6,
+    "year": 2026,
+    "total_payroll": 4200.0,
+    "employees_paid": 1,
+    "total_employees": 1,
+    "average_salary": 4200.0,
+    "completion_percentage": 100.0
+  },
+  {
+    "month": 7,
+    "year": 2026,
+    "total_payroll": 4200.0,
+    "employees_paid": 1,
+    "total_employees": 1,
+    "average_salary": 4200.0,
+    "completion_percentage": 100.0
+  },
+  {
+    "month": 8,
+    "year": 2026,
+    "total_payroll": 4200.0,
+    "employees_paid": 1,
+    "total_employees": 1,
+    "average_salary": 4200.0,
+    "completion_percentage": 100.0
+  },
+  {
+    "month": 9,
+    "year": 2026,
+    "total_payroll": 4200.0,
+    "employees_paid": 1,
+    "total_employees": 1,
+    "average_salary": 4200.0,
+    "completion_percentage": 100.0
+  }
+]

@@ -1,0 +1,115 @@
+{
+  "$defs": {
+    "EmployeeData": {
+      "additionalProperties": false,
+      "description": "Response DTO for a single employee.",
+      "properties": {
+        "id": {
+          "description": "Employee ID",
+          "title": "Id",
+          "type": "integer"
+        },
+        "first_name": {
+          "description": "First name",
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "Last name",
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number",
+          "title": "Phone"
+        },
+        "position": {
+          "description": "Position",
+          "title": "Position",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/EmployeeStatus",
+          "description": "Employee status"
+        },
+        "department_id": {
+          "description": "Department ID",
+          "title": "Department Id",
+          "type": "integer"
+        },
+        "department_name": {
+          "description": "Department name",
+          "title": "Department Name",
+          "type": "string"
+        },
+        "manager_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Manager ID",
+          "title": "Manager Id"
+        },
+        "created_at": {
+          "description": "Creation timestamp",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "Last update timestamp",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "first_name",
+        "last_name",
+        "email",
+        "position",
+        "status",
+        "department_id",
+        "department_name",
+        "created_at",
+        "updated_at"
+      ],
+      "title": "EmployeeData",
+      "type": "object"
+    },
+    "EmployeeStatus": {
+      "description": "Possible employee statuses.",
+      "enum": [
+        "active",
+        "on_leave",
+        "inactive"
+      ],
+      "title": "EmployeeStatus",
+      "type": "string"
+    }
+  },
+  "description": "Response DTO for the employees list.",
+  "items": {
+    "$ref": "#/$defs/EmployeeData"
+  },
+  "title": "EmployeeListResponse",
+  "type": "array"
+}
