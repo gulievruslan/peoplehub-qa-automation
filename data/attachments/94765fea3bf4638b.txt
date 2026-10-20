@@ -1,4 +1,0 @@
-date: Tue, 20 Oct 2026 11:29:49 GMT
-server: uvicorn
-content-length: 222
-content-type: application/json

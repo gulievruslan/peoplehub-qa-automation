@@ -1,0 +1,27 @@
+curl \
+  -X \
+  POST \
+  http://127.0.0.1:8000/api/employees \
+  -H \
+  'User-Agent: python-requests/2.34.2' \
+  -H \
+  'Accept-Encoding: gzip, deflate' \
+  -H \
+  'Accept: */*' \
+  -H \
+  'Connection: keep-alive' \
+  -H \
+  'Authorization: Bearer ***' \
+  -H \
+  'Content-Type: application/json' \
+  --data-raw \
+  '{
+  "first_name": "first_name_by_fixture fcwffmtlcg",
+  "last_name": "last_name_by_fixture hxqmrpiejf",
+  "email": "airline1903@mail.ru",
+  "position": "Position_by_AT owhnqmvodg",
+  "department_id": 15,
+  "phone": "+7(688)345-33-40",
+  "status": "active",
+  "manager_id": null
+}'
