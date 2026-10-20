@@ -427,6 +427,12 @@ jobs:
             exit 1
           fi
 
+      - name: Mark executed Qase cases as automated
+        env:
+          QASE_TESTOPS_API_TOKEN: ${{ secrets.QASE_TESTOPS_API_TOKEN }}
+          QASE_PROJECT_CODE: ${{ vars.QASE_PROJECT_CODE }}
+        run: python automation/scripts/mark_qase_cases_automated.py --results-dir allure-results
+
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
