@@ -64,9 +64,11 @@ class LocatorPW:
             )
 
         if self.locator_fn is not None:
+            locator_fn = self.locator_fn
+
             return LocatorPW(
                 name=formatted_name,
-                locator_fn=lambda page: self.locator_fn(page, **kwargs),
+                locator_fn=lambda page: locator_fn(page, **kwargs),
                 page=self._page,
             )
 
