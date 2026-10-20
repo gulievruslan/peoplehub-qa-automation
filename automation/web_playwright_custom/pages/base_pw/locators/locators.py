@@ -22,7 +22,7 @@ class LocatorPW:
         self,
         name: str,
         selector: str | None = None,
-        locator_fn: Callable[[Page], Locator] | None = None,
+        locator_fn: Callable[..., Locator] | None = None,
         page: Page | None = None,
     ) -> None:
         """Initialize the locator object."""
@@ -53,15 +53,24 @@ class LocatorPW:
         raise TypeError("The locator must be defined by either a selector or a callable.")
 
     def format(self, **kwargs: object) -> LocatorPW:
-        """Format a string-based locator."""
-        if self.selector is None:
-            raise TypeError("A locator created with locator_fn cannot be formatted.")
+        """Format a string-based or callable locator."""
+        formatted_name = self.name.format(**kwargs)
 
-        return LocatorPW(
-            name=self.name.format(**kwargs),
-            selector=self.selector.format(**kwargs),
-            page=self._page,
-        )
+        if self.selector is not None:
+            return LocatorPW(
+                name=formatted_name,
+                selector=self.selector.format(**kwargs),
+                page=self._page,
+            )
+
+        if self.locator_fn is not None:
+            return LocatorPW(
+                name=formatted_name,
+                locator_fn=lambda page: self.locator_fn(page, **kwargs),
+                page=self._page,
+            )
+
+        raise TypeError("The locator must be defined by either a selector or a callable.")
 
     def __getattr__(self, item: str) -> Any:
         """Delegate attribute access to the underlying Locator."""
@@ -128,6 +137,28 @@ class LocatorPW:
         raise AttributeError(
             f'Cannot overwrite LocatorPW "{self._attr_name}". '
             "Use formatting instead: .format(param=value).",
+        )
+
+    def child(self, *, name: str, selector: str) -> LocatorPW:
+        """Create a nested locator by appending a selector to the current one.
+
+        Args:
+            name: Description of the new element.
+            selector: Selector suffix appended to the parent selector.
+
+        Returns:
+            A new LocatorPW whose selector is the parent selector plus the suffix.
+
+        Raises:
+            TypeError: If the parent locator was created with locator_fn.
+        """
+        if self.selector is None:
+            raise TypeError("A locator created with locator_fn cannot have a child by selector.")
+
+        return LocatorPW(
+            name=name,
+            selector=f"{self.selector}{selector}",
+            page=self._page,
         )
 
 

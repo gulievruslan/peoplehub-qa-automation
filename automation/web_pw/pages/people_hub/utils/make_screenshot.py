@@ -26,20 +26,15 @@ def make_screenshot[DecFunc: Callable[..., Any]](decorated: DecFunc) -> DecFunc:
             exception = error
             result = None
 
-        if isinstance(page, Page):
+        if isinstance(page, Page) and exception is not None:
             try:
-                label = "success" if exception is None else "error"
                 allure.attach(
                     body=page.screenshot(full_page=True),
-                    name=f"Screenshot: {decorated.__name__} — {label}",
+                    name=f"Screenshot: {decorated.__name__} — error",
                     attachment_type=allure.attachment_type.PNG,
                 )
-            except Exception as error:
-                allure.attach(
-                    body=str(error),
-                    name=f"Screenshot error: {decorated.__name__}",
-                    attachment_type=allure.attachment_type.TEXT,
-                )
+            except Exception:
+                pass
 
         if exception is not None:
             raise exception

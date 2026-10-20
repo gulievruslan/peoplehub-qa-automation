@@ -46,6 +46,6 @@ class LoginPage(BasePeopleHubPage, AuthPageLocatorsPW):
     @step('Check "sign in" button displaying')
     def check_sign_in_button_displaying(self):
         """Check "sign in" button displaying."""
-        self.expect(self.BUTTON_SIGN_IN).to_be_visible(timeout=TIME_ACTION)
+        self.expect(target=self.BUTTON_SIGN_IN).to_be_visible(timeout=TIME_ACTION)
 
 

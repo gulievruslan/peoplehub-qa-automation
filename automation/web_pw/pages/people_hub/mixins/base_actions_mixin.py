@@ -90,17 +90,19 @@ class BaseActionsMixin:
         self,
         locator: PlaywrightLocator,
         value: str = "",
+        is_clear: bool = True,
         timeout: float = TIME_ACTION,
     ):
-        """Clear an input and optionally type text character by character.
+        """Optionally clear an input and type text character by character.
 
         Args:
             locator: Input locator.
-            value: Text to enter. An empty string clears the input only.
+            value: Text to enter.
+            is_clear: Whether to clear the input before typing.
             timeout: Timeout in milliseconds.
         """
-
-        locator.fill("", timeout=timeout)
+        if is_clear:
+            locator.fill("", timeout=timeout)
 
         if value:
             locator.press_sequentially(value, timeout=timeout)

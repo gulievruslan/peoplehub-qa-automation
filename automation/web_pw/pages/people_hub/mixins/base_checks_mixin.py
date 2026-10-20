@@ -7,11 +7,11 @@ from typing import TYPE_CHECKING, Any, Literal
 
 from playwright.sync_api import Locator, TimeoutError
 
+from automation.custom.logger.project_logger import logger
 from automation.custom.allure_custom.custom_allure import step
 from automation.custom.asserts.soft_assert import soft_assert
 from automation.web_playwright_custom.pages.base_pw import PlaywrightLocator, get_description
 from automation.web_pw.pages.people_hub.constants import TIME_ACTION, TIME_LOAD, TIME_WAIT
-from automation.web_pw.pages.people_hub.utils.make_screenshot import make_screenshot
 
 if TYPE_CHECKING:
     from automation.web_playwright_custom.pages.base_pw import BasePagePW
@@ -49,7 +49,6 @@ class BaseChecksMixin(_Base):
         return locator.describe(description=f'Element with text "{text}"')
 
     @step(title="Wait for element to become visible")
-    @make_screenshot
     def expect_to_be_visible(
         self,
         locator: PlaywrightLocator | Locator,
@@ -63,14 +62,12 @@ class BaseChecksMixin(_Base):
             timeout: Maximum wait time in milliseconds.
             is_need_scroll: Whether to scroll the element into view before checking.
         """
-
         if is_need_scroll:
             self._scroll_into_view(locator=locator, timeout=timeout)
 
         self.expect(target=locator).to_be_visible(timeout=timeout)
 
     @step(title="Wait for all elements to become visible")
-    @make_screenshot
     def expect_all_to_be_visible(
         self,
         locators: Iterable[PlaywrightLocator | Locator],
@@ -92,12 +89,12 @@ class BaseChecksMixin(_Base):
                 is_need_scroll=is_need_scroll,
             )
 
-    @step(title="Soft-check element visibility")
+    @step(title="Soft-check elements visibility")
     def soft_check_elements_visibility(
         self,
         locators: Iterable[PlaywrightLocator],
         is_visible: bool = True,
-        timeout: float = TIME_ACTION,
+        timeout: float = TIME_WAIT,
         is_need_scroll: bool = False,
     ):
         """Soft-check the visibility state of multiple elements.
@@ -146,7 +143,7 @@ class BaseChecksMixin(_Base):
         """
 
         if is_need_scroll and is_visible:
-            self._scroll_into_view(locator=locator, timeout=timeout)
+            self._scroll_into_view(locator=locator, timeout=TIME_WAIT)
 
         try:
             if is_visible:
@@ -159,11 +156,16 @@ class BaseChecksMixin(_Base):
             condition = False
 
         expected_state = "visible" if is_visible else "hidden"
-        failure_message = message or (
-            f"Element {get_description(target=locator)} was not {expected_state}."
-        )
 
-        soft_assert(condition=condition, message=failure_message)
+        if condition:
+            result_message = f"Element {get_description(target=locator)} is {expected_state} as expected."
+
+        else:
+            result_message = message or (
+                f"Element {get_description(target=locator)} was not {expected_state}."
+            )
+
+        soft_assert(condition=condition, message=result_message)
 
     @step(title="Check element visibility")
     def check_visibility(

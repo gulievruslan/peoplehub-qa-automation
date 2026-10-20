@@ -1,5 +1,4 @@
 """Fixtures for configuring and running PeopleHub Playwright tests."""
-
 from collections.abc import Generator
 from typing import Any
 
@@ -11,15 +10,15 @@ from playwright.sync_api import Browser, Page, Playwright, expect, sync_playwrig
 
 from automation.config.users import TestUser
 from automation.custom.allure_custom.custom_allure import step
+from automation.custom.config import Config
 from automation.custom.logger.project_logger import logger
 from automation.web_pw import PWLocalOptionsFactory
+from automation.web_pw.pages.people_hub.constants import DEFAULT_TIMEOUT
 from automation.web_pw.pages.people_hub.pages.base_page import BasePeopleHubPage
 from automation.web_pw.pages.people_hub.utils.auth import get_access_token
 
-DEFAULT_TIMEOUT = 15_000
-DEFAULT_FRONTEND_URL = "http://localhost:5173"
-DEFAULT_DASHBOARD_URL = f"{DEFAULT_FRONTEND_URL}/dashboard"
-DEFAULT_LOGIN_URL = f"{DEFAULT_FRONTEND_URL}/login"
+DEFAULT_DASHBOARD_URL = f"{Config.base_url}/dashboard"
+DEFAULT_LOGIN_URL = f"{Config.base_url}/login"
 
 _SCREENSHOT_MARKER = "_peoplehub_failure_screenshot_attached"
 _PAGE_KEY = "_peoplehub_playwright_page"
@@ -51,6 +50,7 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[Any]):
         )
         setattr(item, _SCREENSHOT_MARKER, True)
         logger.info("Attached failure screenshot for test: %s", item.nodeid)
+
     except Exception:
         logger.exception("Failed to attach failure screenshot for test: %s", item.nodeid)
 
@@ -84,6 +84,7 @@ def pw_browser(
 
     try:
         yield browser
+
     finally:
         browser.close()
 
@@ -116,7 +117,7 @@ def pw_open_page(
     if authenticated and not isinstance(user, TestUser):
         raise TypeError("An authenticated test requires a TestUser instance.")
 
-    page_url = target_url or (DEFAULT_DASHBOARD_URL if authenticated else DEFAULT_LOGIN_URL)
+    page_url = target_url or (DEFAULT_LOGIN_URL if not authenticated else None)
 
     context = pw_browser.new_context(**browser_context_args)
     context.set_default_timeout(DEFAULT_TIMEOUT)
@@ -136,10 +137,15 @@ def pw_open_page(
         target_page = page_class(page=page, **kwargs)
 
         with step(title=f"Open page: {page_class.__name__}"):
-            page.goto(page_url)
+            if page_url:
+                page.goto(page_url)
+            else:
+                target_page.get()
+
             page.wait_for_load_state("domcontentloaded")
 
         yield target_page
+
     except Exception:
         if page is not None and not page.is_closed():
             try:
@@ -148,11 +154,13 @@ def pw_open_page(
                     name=f"Page setup failed: {page_class.__name__}",
                     attachment_type=attachment_type.PNG,
                 )
+
             except Exception:
                 logger.exception("Failed to capture setup screenshot")
 
         logger.exception("Failed to open page object: %s", page_class.__name__)
         raise
+
     finally:
         setattr(request.node, _PAGE_KEY, None)
         context.close()

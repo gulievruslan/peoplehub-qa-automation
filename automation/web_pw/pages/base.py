@@ -22,12 +22,19 @@ class BasePage:
         self.url = url
 
     @step("Open page URL")
-    def get(self) -> "BasePage":
-        """Navigate to the page URL."""
-        if self.url is None:
+    def get(self, url: str | None = None) -> "BasePage":
+        """Open page URL.
+
+        Args:
+            url: Optional page URL.
+        """
+        target_url = url or self.url
+
+        if target_url is None:
             raise ValueError("URL is not set. Provide a URL when creating the page.")
 
-        self.page.goto(self.url)
+        self.page.goto(target_url)
+
         return self
 
     @staticmethod

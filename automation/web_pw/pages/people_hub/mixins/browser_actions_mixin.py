@@ -4,9 +4,11 @@ import json
 from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING, Any, Literal, cast
 
+from playwright.sync_api import Dialog
+
 from automation.custom.allure_custom.custom_allure import step
 from automation.custom.asserts.soft_assert import soft_assert
-from automation.web_pw.pages.people_hub.constants import TIME_ACTION
+from automation.web_pw.pages.people_hub.constants import TIME_ACTION, TIME_WAIT
 
 StorageType = Literal["local", "session"]
 
@@ -212,31 +214,32 @@ class BrowserActionsMixin(_Base):
                 arg=[storage_name, key],
             )
 
-    @step(title="Accept JavaScript dialog")
-    def accept_alert(self, action: Callable[[], None], timeout: float = TIME_ACTION):
-        """Accept a JavaScript dialog triggered by an action.
+    @step(title="Handle JavaScript dialog")
+    def handle_alert(
+        self,
+        action: Callable[[], None],
+        accept: bool = True,
+    ):
+        """Accept or dismiss a JavaScript dialog."""
+        def handle_dialog(dialog: Dialog):
+            """Accept or dismiss a JavaScript dialog.
 
-        Args:
-            action: Callable that triggers the dialog.
-            timeout: Maximum time to wait for the dialog, in milliseconds.
-        """
-        with self.page.expect_event("dialog", timeout=timeout) as dialog_info:
+            Args:
+                dialog: Dialog that triggered the dialog.
+            """
+            if accept:
+                dialog.accept()
+
+            else:
+                dialog.dismiss()
+
+        self.page.on("dialog", handle_dialog)
+
+        try:
             action()
 
-        dialog_info.value.accept()
-
-    @step(title="Dismiss JavaScript dialog")
-    def dismiss_alert(self, action: Callable[[], None], timeout: float = TIME_ACTION):
-        """Dismiss a JavaScript dialog triggered by an action.
-
-        Args:
-            action: Callable that triggers the dialog.
-            timeout: Maximum time to wait for the dialog, in milliseconds.
-        """
-        with self.page.expect_event("dialog", timeout=timeout) as dialog_info:
-            action()
-
-        dialog_info.value.dismiss()
+        finally:
+            self.page.remove_listener("dialog", handle_dialog)
 
     @step(title="Enter text into JavaScript prompt")
     def send_keys_to_alert(
@@ -258,8 +261,14 @@ class BrowserActionsMixin(_Base):
         dialog_info.value.accept(prompt_text=text)
 
     @step(title="Check exact URL match")
-    def check_current_url(self, expected_url: str) :
+    def check_current_url(self, expected_url: str):
         """Soft-check that the current URL exactly matches the expected URL."""
+        try:
+            self.page.wait_for_url(expected_url, timeout=TIME_WAIT)
+
+        except TimeoutError:
+            pass
+
         actual_url = self.page.url
         soft_assert(
             condition=actual_url == expected_url,
