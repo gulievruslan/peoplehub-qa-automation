@@ -15,7 +15,7 @@ permissions:
 jobs:
   frontend-build:
     name: Frontend Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Checkout repository
@@ -38,7 +38,7 @@ jobs:
 
   application-quality-gate:
     name: Application Quality Gate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       API_BASE_URL: http://127.0.0.1:8000
@@ -112,7 +112,7 @@ jobs:
   automation-quality-gate:
     name: Automation Quality Gate
     needs: [application-quality-gate]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Checkout repository
@@ -180,7 +180,7 @@ jobs:
   api-tests:
     name: API Tests
     needs: [application-quality-gate, automation-quality-gate]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       API_BASE_URL: http://127.0.0.1:8000
@@ -246,7 +246,7 @@ jobs:
   web-tests:
     name: Playwright Tests
     needs: [application-quality-gate, automation-quality-gate]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     outputs:
       web_tests_exist: ${{ steps.web-tests.outputs.exists }}
@@ -375,7 +375,7 @@ jobs:
 
   allure-report:
     name: Allure Report
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     needs:
       - application-quality-gate
@@ -412,14 +412,14 @@ jobs:
           path: gh-pages
 
       - name: Download API test results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           name: api-test-results
           path: artifacts/api-test-results
 
       - name: Download Web test results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           name: web-test-results
