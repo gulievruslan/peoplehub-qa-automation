@@ -37,6 +37,7 @@ class TestDepartmentsUI(PeopleHubWeb):
         new_department_page.click_input_field()
         new_department_page.fill_new_department(department_name=create_random_department_name)
         new_department_page.click_button_add_department()
+
         pw_open_page.check_department_displaying(department_name=create_random_department_name)
 
     @typed_qase_id(qase_id=170)
@@ -59,6 +60,7 @@ class TestDepartmentsUI(PeopleHubWeb):
             new_department_name=create_random_department_name,
         )
         pw_open_page.click_button_dynamic(button=DepartmentsButtonNames.SAVE)
+
         pw_open_page.check_department_displaying(department_name=create_random_department_name)
 
     @typed_qase_id(qase_id=171)
@@ -75,6 +77,7 @@ class TestDepartmentsUI(PeopleHubWeb):
         pw_open_page: Fixture[DepartmentsPage],
     ):
         pw_open_page.delete_department(department_name=create_random_department_name)
+
         pw_open_page.check_department_absence(department_name=create_random_department_name)
 
     @typed_qase_id(qase_id=172)
@@ -92,6 +95,7 @@ class TestDepartmentsUI(PeopleHubWeb):
             new_department_name="",
         )
         pw_open_page.click_button_dynamic(button=DepartmentsButtonNames.SAVE)
+
         pw_open_page.check_department_can_not_be_empty()
 
 
@@ -106,4 +110,5 @@ class TestDepartmentsUI(PeopleHubWeb):
     ):
         pw_open_page.click_input_field_department()
         pw_open_page.search_for_department(department_name=create_random_department_name)
+
         pw_open_page.check_department_displaying(department_name=create_random_department_name)

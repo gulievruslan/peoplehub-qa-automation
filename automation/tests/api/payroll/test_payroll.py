@@ -9,6 +9,7 @@ from automation.custom.generators.randoms import get_random_number
 from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubApi
 from automation.tests.api.enums import PayrollStatuses
+from automation.tests.constants import ASSERT_MESSAGE
 from automation.tests.custom_types import EmployeeParams
 
 
@@ -38,4 +39,8 @@ class TestPayroll(PeopleHubApi):
 
         response.assert_status_code(expected_code=201)
         response.assert_model_valid()
-        assert response.dto().status == PayrollStatuses.PENDING
+        response_status = response.dto().status
+
+        assert (
+            response.dto().status == PayrollStatuses.PENDING
+        ), ASSERT_MESSAGE.format(expected=PayrollStatuses.PENDING, actual=response_status)

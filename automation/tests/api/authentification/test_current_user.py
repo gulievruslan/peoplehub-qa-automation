@@ -7,6 +7,7 @@ from automation.custom.custom_typing import Fixture
 from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubApi
 from automation.tests.api.enums import NegativeAuth
+from automation.tests.constants import ASSERT_MESSAGE
 
 
 @story('Current user')
@@ -30,7 +31,11 @@ class TestCurrentUser(PeopleHubApi):
 
         response.assert_status_code(expected_code=401)
         response.assert_model_valid(is_error_model=True)
-        assert response.dto(is_error_model=True).detail == NegativeAuth.NOT_AUTHENTICATED
+        error_model_detail = response.dto(is_error_model=True).detail
+
+        assert (
+            error_model_detail == NegativeAuth.NOT_AUTHENTICATED
+        ), ASSERT_MESSAGE.format(expected=NegativeAuth.NOT_AUTHENTICATED, actual=error_model_detail)
 
     @mark.negative
     @typed_qase_id(qase_id=8)
@@ -40,4 +45,8 @@ class TestCurrentUser(PeopleHubApi):
 
         response.assert_status_code(expected_code=401)
         response.assert_model_valid(is_error_model=True)
-        assert response.dto(is_error_model=True).detail == NegativeAuth.INVALID_OR_EXPIRED_TOKEN
+        error_model_detail = response.dto(is_error_model=True).detail
+
+        assert (
+            error_model_detail == NegativeAuth.INVALID_OR_EXPIRED_TOKEN
+        ), ASSERT_MESSAGE.format(expected=NegativeAuth.INVALID_OR_EXPIRED_TOKEN, actual=error_model_detail)

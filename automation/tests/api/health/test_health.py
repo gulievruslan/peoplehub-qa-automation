@@ -6,6 +6,7 @@ from automation.config.users import ADMIN
 from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubApi
 from automation.tests.api.enums import AppStatuses
+from automation.tests.constants import ASSERT_MESSAGE
 
 
 @story('Health')
@@ -19,7 +20,11 @@ class TestHealth(PeopleHubApi):
 
         response.assert_status_code()
         response.assert_model_valid()
-        assert response.dto().status == AppStatuses.OK
+        response_status = response.dto().status
+
+        assert (
+            response_status == AppStatuses.OK
+        ), ASSERT_MESSAGE.format(expected=AppStatuses.OK, actual=response_status)
 
     @typed_qase_id(qase_id=72)
     @typed_title(value="Check database health")
@@ -28,4 +33,8 @@ class TestHealth(PeopleHubApi):
 
         response.assert_status_code()
         response.assert_model_valid()
-        assert response.dto().database == AppStatuses.OK
+        response_database = response.dto().database
+
+        assert (
+            response_database == AppStatuses.OK
+        ), ASSERT_MESSAGE.format(expected=AppStatuses.OK, actual=response_database)

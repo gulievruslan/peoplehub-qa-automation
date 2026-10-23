@@ -71,7 +71,7 @@ class TestLeaveRequestsUI(PeopleHubWeb):
     @typed_title(value='Create a leave request as HR')
     @mark.parametrize(
         "delete_leave_request_after_test, pw_open_page",
-        [({'reason':LEAVE_REQUEST_REASON_RANDOM}, (HR, LeaveRequestModal))],
+        [({'reason': LEAVE_REQUEST_REASON_RANDOM}, (HR, LeaveRequestModal))],
         indirect=True
     )
     def test_hr_create_leave_requests(

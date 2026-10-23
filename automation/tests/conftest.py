@@ -206,8 +206,9 @@ def create_leave_request_and_delete(
 @fixture
 @log_fixture
 @typed_title(value='Delete a leave request after test.')
-def delete_leave_request_after_test(request: SubRequest, create_employee_leave_request: Fixture[str]) -> FixtureYield[
-    None]:
+def delete_leave_request_after_test(
+    request: SubRequest, create_employee_leave_request: Fixture[str]
+) -> FixtureYield[None]:
     """Delete a leave request after test.
 
     Args:
@@ -249,13 +250,10 @@ def create_payroll_record_and_delete_after_test(
 @fixture
 @log_fixture
 @typed_title(value='Delete payroll after test')
-def delete_payroll_after_test(
-    request: SubRequest, create_employee_and_delete: Fixture[EmployeeParams]
-) -> FixtureYield[None]:
+def delete_payroll_after_test(create_employee_and_delete: Fixture[EmployeeParams]) -> FixtureYield[None]:
     """Delete payroll after test.
 
     Args:
-        request: subrequest
         create_employee_and_delete: create a new employee and delete after test fixture
     """
     yield

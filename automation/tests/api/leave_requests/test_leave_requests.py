@@ -11,6 +11,7 @@ from automation.dto.schema.auth_models import UserResponse
 from automation.dto.schema.leave_requests_models import LeaveRequestStatus
 from automation.tests.allure_constants import PeopleHubApi
 from automation.tests.api.enums import LeaveRequestStatuses
+from automation.tests.constants import ASSERT_MESSAGE
 from automation.tests.custom_types import LeaveRequestParams
 
 
@@ -48,8 +49,12 @@ class TestLeaveRequests(PeopleHubApi):
 
         response_dto = response.dto()
 
-        assert response_dto.status == LeaveRequestStatuses.PENDING
-        assert response_dto.reason == create_employee_leave_request
+        assert (
+            response_dto.status == LeaveRequestStatuses.PENDING
+        ), ASSERT_MESSAGE.format(expected=LeaveRequestStatuses.PENDING, actual=response_dto.status)
+        assert (
+            response_dto.reason == create_employee_leave_request
+        ), ASSERT_MESSAGE.format(expected=LeaveRequestStatuses.PENDING, actual=response_dto.reason)
 
     @typed_qase_id(qase_id=65)
     @typed_title(value="Get leave request by ID")

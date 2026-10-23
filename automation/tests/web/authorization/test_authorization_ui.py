@@ -18,12 +18,14 @@ class TestAuthorizationUI(PeopleHubWeb):
     @typed_title(value='Verify that a user without an authenticated session cannot access protected pages.')
     @mark.parametrize("pw_open_page", [(None, LoginPage, {"authenticated": False})], indirect=True)
     def test_verify_without_auth(self, pw_open_page: Fixture[LoginPage]):
+        expected_url = f'{Config.base_url}/login'
         pw_open_page.get(url=f'{Config.base_url}/dashboard')
-        pw_open_page.check_current_url(expected_url=f'{Config.base_url}/login')
+        pw_open_page.check_current_url(expected_url=expected_url)
         pw_open_page.get(url=f'{Config.base_url}/employees')
-        pw_open_page.check_current_url(expected_url=f'{Config.base_url}/login')
+        pw_open_page.check_current_url(expected_url=expected_url)
         pw_open_page.get(url=f'{Config.base_url}/departments')
-        pw_open_page.check_current_url(expected_url=f'{Config.base_url}/login')
+        pw_open_page.check_current_url(expected_url=expected_url)
+
         pw_open_page.check_sign_in_button_displaying()
 
 
@@ -40,4 +42,5 @@ class TestAuthorizationUI(PeopleHubWeb):
         pw_open_page.click_on_field(field_name="password")
         pw_open_page.enter_field(field_name="password", value=user.password.get_secret_value())
         pw_open_page.click_on_element(selector=pw_open_page.BUTTON_SIGN_IN)
+
         HeaderComponent(page=pw_open_page.page).check_role_information_in_header(role=role)

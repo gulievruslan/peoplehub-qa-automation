@@ -19,7 +19,15 @@ from automation.web_pw.pages.people_hub.people_hub_web.pages.login_page import L
 class TestAuthUserUI(PeopleHubWeb):
 
     @staticmethod
-    def _verify_login_validation(page: LoginPage, email: str, password: str, expected_locator: LocatorPW) -> None:
+    def _verify_login_validation(page: LoginPage, email: str, password: str, expected_locator: LocatorPW):
+        """Verify login validation
+
+        Args:
+            page: page instant
+            email: user email
+            password: user password
+            expected_locator: expected locator
+        """
         page.click_on_field(field_name="email")
         page.enter_field(field_name="email", value=email)
         page.click_on_field(field_name="password")
@@ -30,7 +38,7 @@ class TestAuthUserUI(PeopleHubWeb):
     @typed_qase_id(qase_id=74)
     @typed_title(value="Login with invalid credentials")
     @mark.parametrize("pw_open_page", [(None, LoginPage, {"authenticated": False})], indirect=True)
-    def test_login_with_invalid_credentials(self, pw_open_page: Fixture[LoginPage]) -> None:
+    def test_login_with_invalid_credentials(self, pw_open_page: Fixture[LoginPage]):
         self._verify_login_validation(
             page=pw_open_page,
             email=get_random_email(),
@@ -41,7 +49,7 @@ class TestAuthUserUI(PeopleHubWeb):
     @typed_qase_id(qase_id=75)
     @typed_title(value="Login form required-field validation")
     @mark.parametrize("pw_open_page", [(None, LoginPage, {"authenticated": False})], indirect=True)
-    def test_login_form_required_field_validation(self, pw_open_page: Fixture[LoginPage]) -> None:
+    def test_login_form_required_field_validation(self, pw_open_page: Fixture[LoginPage]):
         self._verify_login_validation(
             page=pw_open_page,
             email="",
@@ -58,6 +66,7 @@ class TestAuthUserUI(PeopleHubWeb):
         pw_open_page.click_on_field(field_name="password")
         pw_open_page.enter_field(field_name="password", value=EMPLOYEE.password.get_secret_value())
         pw_open_page.click_on_element(selector=pw_open_page.BUTTON_SIGN_IN)
+
         SidebarComponent(page=pw_open_page.page).check_success_login_via_logo()
 
     @typed_qase_id(qase_id=136)
@@ -67,6 +76,7 @@ class TestAuthUserUI(PeopleHubWeb):
         page = pw_open_page.page
         HeaderComponent(page=page).click_on_button_logout()
         LoginPage(page=page).check_sign_in_button_displaying()
-        assert page.evaluate("localStorage.getItem('access_token')") is None, (
-            "Access token should be removed from localStorage after logout"
-        )
+
+        assert (
+            page.evaluate("localStorage.getItem('access_token')") is None
+        ), "Access token should be removed from localStorage after logout"

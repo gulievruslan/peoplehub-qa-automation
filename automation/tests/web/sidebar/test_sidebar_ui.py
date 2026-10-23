@@ -32,8 +32,5 @@ class TestSidebarUI(PeopleHubWeb):
         )
 
         for href_element, text in menu_items:
-            pw_open_page.click_sidebar_element(
-                href_element=href_element,
-                text=text,
-            )
+            pw_open_page.click_sidebar_element(href_element=href_element, text=text)
             pw_open_page.check_sidebar_element_is_active(href_element=href_element, text=text)

@@ -7,6 +7,7 @@ from automation.custom.generators.randoms import get_random_email, get_random_st
 from automation.custom.typed_decorators import typed_qase_id, typed_title
 from automation.tests.allure_constants import PeopleHubApi
 from automation.tests.api.enums import NegativeAuth
+from automation.tests.constants import ASSERT_MESSAGE
 
 
 @story('Authentification')
@@ -53,7 +54,9 @@ class TestAuthUser(PeopleHubApi):
 
         detail = response.dto(is_error_model=True).detail[0]
         assert not isinstance(detail, str)
-        assert detail.msg == NegativeAuth.NOT_VALID_EMAIL_ADDRESS
+        assert (
+            detail.msg == NegativeAuth.NOT_VALID_EMAIL_ADDRESS
+        ), ASSERT_MESSAGE.format(expected=NegativeAuth.NOT_VALID_EMAIL_ADDRESS, actual=detail.msg)
 
     @mark.negative
     @typed_qase_id(qase_id=5)
@@ -66,4 +69,6 @@ class TestAuthUser(PeopleHubApi):
 
         detail = response.dto(is_error_model=True).detail[0]
         assert not isinstance(detail, str)
-        assert detail.msg == NegativeAuth.VALID_STRING_INPUT
+        assert (
+            detail.msg == NegativeAuth.VALID_STRING_INPUT
+        ), ASSERT_MESSAGE.format(expected=NegativeAuth.VALID_STRING_INPUT, actual=detail.msg)
