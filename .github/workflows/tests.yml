@@ -439,7 +439,10 @@ jobs:
             exit 1
           fi
 
+      # Disabled because using the Qase API requires a paid subscription.
+      # Re-enable when API access is available.
       - name: Mark executed Qase cases as automated
+        if: ${{ false }}
         env:
           QASE_TESTOPS_API_TOKEN: ${{ secrets.QASE_TESTOPS_API_TOKEN }}
           QASE_PROJECT_CODE: ${{ vars.QASE_PROJECT_CODE }}
