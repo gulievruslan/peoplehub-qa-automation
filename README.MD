@@ -101,8 +101,8 @@ The automation suite covers backend functionality and user-facing workflows.
 | Test Layer | Automated Tests | Focus |
 |:-----------|----------------:|:------|
 | API | 32 | Endpoints, response data, business rules, and access control |
-| Web | 33 | Browser-based user workflows using Playwright |
-| **Total** | **65** | **API and UI automation** |
+| Web | 34 | Browser-based user workflows using Playwright |
+| **Total** | **66** | **API and UI automation** |
 
 The API suite currently provides the larger share of automation coverage. Web automation is actively being expanded.
 
