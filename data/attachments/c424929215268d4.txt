@@ -1,0 +1,23 @@
+curl \
+  -X \
+  POST \
+  http://127.0.0.1:8000/api/leave-requests \
+  -H \
+  'User-Agent: python-requests/2.34.2' \
+  -H \
+  'Accept-Encoding: gzip, deflate' \
+  -H \
+  'Accept: */*' \
+  -H \
+  'Connection: keep-alive' \
+  -H \
+  'Authorization: Bearer ***' \
+  -H \
+  'Content-Type: application/json' \
+  --data-raw \
+  '{
+  "employee_id": 1,
+  "start_date": "2026-11-08T21:02:23.553715",
+  "end_date": "2026-12-07T21:02:23.553747",
+  "reason": "leave_request_random_njlvxfwdph"
+}'

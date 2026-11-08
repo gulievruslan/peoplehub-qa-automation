@@ -1,3 +1,0 @@
-date: Wed, 04 Nov 2026 12:54:57 GMT
-server: uvicorn
-content-type: application/json
