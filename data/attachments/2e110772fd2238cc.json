@@ -1,0 +1,12 @@
+[
+  {
+    "id": 3,
+    "employee_id": 8,
+    "start_date": "2026-11-22T00:00:00",
+    "end_date": "2026-11-26T00:00:00",
+    "reason": "leaving_request_reason_random_vbljxgxhtc",
+    "status": "pending",
+    "created_at": "2026-11-22T22:24:59.600974",
+    "updated_at": "2026-11-22T22:24:59.600998"
+  }
+]

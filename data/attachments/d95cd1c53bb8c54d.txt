@@ -1,0 +1,27 @@
+curl \
+  -X \
+  POST \
+  http://127.0.0.1:8000/api/employees \
+  -H \
+  'User-Agent: python-requests/2.34.2' \
+  -H \
+  'Accept-Encoding: gzip, deflate' \
+  -H \
+  'Accept: */*' \
+  -H \
+  'Connection: keep-alive' \
+  -H \
+  'Authorization: Bearer ***' \
+  -H \
+  'Content-Type: application/json' \
+  --data-raw \
+  '{
+  "first_name": "first_name_by_fixture nmaynyrphg",
+  "last_name": "last_name_by_fixture devsyfgsii",
+  "email": "albums2010@yandex.ru",
+  "position": "Position_by_AT govwkqlnum",
+  "department_id": 16,
+  "phone": "+7(649)561-28-49",
+  "status": "active",
+  "manager_id": null
+}'
